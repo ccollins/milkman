@@ -1,19 +1,11 @@
 import random
-
+import string
 try:
     from django.db.models.fields.related import RelatedField
 except:
     pass
 
-
 _generators = {}
-
-def char_range(lower, upper):
-    return [chr(x) for x in range(lower, upper+1)]
-
-ASCII_NUMBERS = char_range(48,57)
-ASCII_LOWER = char_range(97,122)
-ASCII_UPPER = char_range(65,90)
 
 def gen(choices=[''], size=1):
     for i in range(0, size):
@@ -30,12 +22,12 @@ def value_for(field):
     return _generators.get(type(field), lambda f: '')(field)
 
 def random_charactor(choices=None):
-    return random.choice(char_set or ASCII_LOWER)
+    return random.choice(char_set or string.ascii_letters)
 
 def random_string(field=None, chars=None):
     max_length = getattr(field, 'max_length', 8)
     if chars is None:
-        chars = (ASCII_LOWER + ASCII_UPPER + ASCII_NUMBERS)
+        chars = (string.ascii_letters + string.digits)
     return ''.join(x for x in gen(chars, max_length))
 
 def deliver(model_class):    
