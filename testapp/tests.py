@@ -1,6 +1,9 @@
-import unittest
 import milkman
 from testapp.models import Root, Child, Sibling, GrandChild, Aunt, Uncle
+
+import unittest
+import types
+
 from django.db import models
 
 MODELS = [Root, Child]
@@ -32,6 +35,14 @@ class ModelTest(unittest.TestCase):
         self.assertEquals(1, len(aunt.uncles.all()))
         self.assertEquals(1, len(Uncle.objects.all()))
         self.assertEquals(Uncle.objects.all()[0], aunt.uncles.all()[0])
+    
+
+class RandomFieldTest(unittest.TestCase):
+    def test_required_field(self):
+        root = milkman.deliver(Root)
+        print "root.name = %r " % repr(root.name)
+        assert root.name
+        assert isinstance(root.boolean, types.BooleanType)
 
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
@@ -42,14 +53,8 @@ class FieldTest(unittest.TestCase):
 
     def test_generate_value_char_field(self):
         f = models.CharField(blank=False,null=False)
-        self.assertEqual('', milkman.value_for(f))
+        self.assertEqual(8, len(milkman.value_for(f)))
     
-    def test_should_deliver(self):
-        assert not milkman.is_deliverable(models.CharField())
-        assert milkman.is_deliverable(models.ManyToManyField(Uncle))
-        assert milkman.is_deliverable(models.ManyToManyField(Aunt))
-        
-
 class MilkmanUtilFuncTest(unittest.TestCase):
     def test_random_str(self):
         self.assertEqual(8, len(milkman.random_string()))
