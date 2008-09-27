@@ -40,7 +40,6 @@ class ModelTest(unittest.TestCase):
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
-        print "root.name = %r " % repr(root.name)
         assert root.name
         assert isinstance(root.boolean, types.BooleanType)
 

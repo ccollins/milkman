@@ -1,5 +1,4 @@
-import random
-import string
+import random, string, datetime
 
 from django.db.models.fields.related import RelatedField, ManyToManyField
 from django.db import models
@@ -30,12 +29,31 @@ def random_string(field=None, chars=None):
 def random_boolean(field=None):
     return random.choice((True, False))
 
+def random_date_string(field):
+    y = random.randint(1900, 2020)
+    m = random.randint(1, 12)
+    d = random.randint(1, 28)
+    return str(datetime.date(y, m, d))
+
+def random_datetime_string(field):
+    h = random.randint(1, 12)
+    m = random.randint(0, 59)
+    result = "%s %d:%d" % (random_date_string(field), h, m)
+    return result
+
+tmpl = "%%d.%%0%dd"
+def random_decimal(field):
+    x = pow(10, field.max_digits - field.decimal_places) - 1
+    y = pow(10, field.decimal_places) - 1
+    fmt_string = tmpl % field.decimal_places
+    return fmt_string % (random.randint(1, x), random.randint(1, y))
+
 add_generator(models.BooleanField, random_boolean)
 add_generator(models.CharField, random_string)
 # add_generator(models.CommaSeparatedIntegerField, default_generator)
-# add_generator(models.DateField, default_generator)
-# add_generator(models.DateTimeField, default_generator)
-# add_generator(models.DecimalField, default_generator)
+add_generator(models.DateField, random_date_string)
+add_generator(models.DateTimeField, random_datetime_string)
+add_generator(models.DecimalField, random_decimal)
 # add_generator(models.EmailField, default_generator)
 # add_generator(models.FileField, default_generator)
 # add_generator(models.FilePathField, default_generator)
@@ -78,11 +96,3 @@ def gen_fields(l):
 
 def needs_generated_value(field):
     return not field.has_default() and not field.blank and not field.null
-
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == '__main__':
-    _test()
