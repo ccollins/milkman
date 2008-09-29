@@ -48,14 +48,25 @@ def random_decimal(field):
     fmt_string = tmpl % field.decimal_places
     return fmt_string % (random.randint(1, x), random.randint(1, y))
 
-class Reference(object): pass
+class Ref(object):
+    """
+    To work around Python's statically nested scopes.  Allows for:
+    def outer(initial_value):
+        ref = Ref(initial_value)
+        def inner(arg):
+            ref.value += 1
+            return arg + ref.value
+        return inner
+    """
+    def __init__(self, value):
+        self.value = value
+        
 def email_generator(addr, domain):
-    ref = Reference()
-    ref.count = 0
+    ref = Ref(0)
     template = "%s%%d@%s" % (addr, domain)
     def random_email(field):
-        ref.count += 1
-        return template % ref.count
+        ref.value += 1
+        return template % ref.value
     return random_email
 
 add_generator(models.BooleanField, random_boolean)
