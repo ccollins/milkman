@@ -1,5 +1,5 @@
-import milkman
-from testapp.models import Root, Child, Sibling, GrandChild, Aunt, Uncle
+from milkman import *
+from testapp.models import *
 
 import unittest
 import types
@@ -50,28 +50,23 @@ class FieldTest(unittest.TestCase):
         self.assert_(not f.has_default())
         self.assertEqual('', f.get_default())
 
-    def test_generate_value_char_field(self):
-        f = models.CharField(blank=False,null=False)
-        self.assertEqual(8, len(milkman.value_for(f)))
-
 class FieldValueGeneratorTest(unittest.TestCase):
     def test_email_generator(self):
         f = models.EmailField()
-        g = milkman.email_generator('test', 'fake.com')
+        g = email_generator('test', 'fake.com')
         self.assertEquals('test1@fake.com', g(f))
         self.assertEquals('test2@fake.com', g(f))
-    
-class MilkmanUtilFuncTest(unittest.TestCase):
+
     def test_random_str(self):
-        self.assertEqual(8, len(milkman.random_string()))
-        self.assertEqual('a' * 8, milkman.random_string(chars=['a']))
+        self.assertEqual(8, len(random_string()))
+        self.assertEqual('a' * 8, random_string(chars=['a']))
         class Foo: 
             max_length = 10
-        self.assertEqual('a' * 10, milkman.random_string(Foo, ['a']))
+        self.assertEqual('a' * 10, random_string(Foo, ['a']))
         
-    def test_gen(self):
-        self.assertEqual([''],[x for x in milkman.gen()])
-        self.assertEqual([1],[x for x in milkman.gen([1])])
-        self.assertEqual(['', ''], [s for s in milkman.gen(size=2)])
-        self.assertEqual([1, 1], [s for s in milkman.gen([1], 2)])
+    def test_random_choice_iterator(self):
+        self.assertEqual([''],[x for x in random_choice_iterator()])
+        self.assertEqual([1],[x for x in random_choice_iterator([1])])
+        self.assertEqual(['', ''], [s for s in random_choice_iterator(size=2)])
+        self.assertEqual([1, 1], [s for s in random_choice_iterator([1], 2)])
         
