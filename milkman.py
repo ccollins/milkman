@@ -48,13 +48,23 @@ def random_decimal(field):
     fmt_string = tmpl % field.decimal_places
     return fmt_string % (random.randint(1, x), random.randint(1, y))
 
+class Reference(object): pass
+def email_generator(addr, domain):
+    ref = Reference()
+    ref.count = 0
+    template = "%s%%d@%s" % (addr, domain)
+    def random_email(field):
+        ref.count += 1
+        return template % ref.count
+    return random_email
+
 add_generator(models.BooleanField, random_boolean)
 add_generator(models.CharField, random_string)
 # add_generator(models.CommaSeparatedIntegerField, default_generator)
 add_generator(models.DateField, random_date_string)
 add_generator(models.DateTimeField, random_datetime_string)
 add_generator(models.DecimalField, random_decimal)
-# add_generator(models.EmailField, default_generator)
+add_generator(models.EmailField, email_generator('user', 'example.com'))
 # add_generator(models.FileField, default_generator)
 # add_generator(models.FilePathField, default_generator)
 # add_generator(models.FloatField, default_generator)

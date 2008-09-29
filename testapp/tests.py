@@ -53,6 +53,13 @@ class FieldTest(unittest.TestCase):
     def test_generate_value_char_field(self):
         f = models.CharField(blank=False,null=False)
         self.assertEqual(8, len(milkman.value_for(f)))
+
+class FieldValueGeneratorTest(unittest.TestCase):
+    def test_email_generator(self):
+        f = models.EmailField()
+        g = milkman.email_generator('test', 'fake.com')
+        self.assertEquals('test1@fake.com', g(f))
+        self.assertEquals('test2@fake.com', g(f))
     
 class MilkmanUtilFuncTest(unittest.TestCase):
     def test_random_str(self):
