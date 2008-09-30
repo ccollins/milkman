@@ -3,19 +3,27 @@ import random, string, datetime
 from django.db.models.fields.related import RelatedField, ManyToManyField
 from django.db import models
 
-def infinity_machine(func):
-    def infinite_generator(*args, **kwargs):
+def loop(func):
+    def loop_generator(*args, **kwargs):
         while 1: 
             yield func(*args, **kwargs)
-    return infinite_generator
+    return loop_generator
         
+def sequence(func):
+    def sequence_generator(*args, **kwargs):
+        i = 0
+        while 1: 
+            i += 1
+            yield func(i, *args, **kwargs)
+    return sequence_generator
+
 class Milkman(object):
     def __init__(self):
-        self.generators = {}
         self.registry = {}
+        self.generators = {}
     
     def add_generator(self, cls, func):
-        self.generators[cls] = func
+        self.registry[cls] = func
     
     def deliver(self, model_class):
         """
@@ -25,25 +33,27 @@ class Milkman(object):
         target = model_class()
         options = model_class._meta
         for f in self.fields_to_generate(options.local_fields):
-            setattr(target, f.name, self.value_for(f))
+            setattr(target, f.name, self.value_for(model_class, f))
         target.save()
         for f in self.fields_to_generate(options.local_many_to_many):
             setattr(target, f.name, [self.deliver(f.rel.to)])
         return target
 
-    def value_for(self, field):
+    def value_for(self, model_class, field):
         if isinstance(field, RelatedField):
             return self.deliver(field.rel.to)
         else:
-            generator = self.generator_for(field)
+            generator = self.generator_for(model_class, field)
             return generator.next()
 
-    def generator_for(self, field):
+    def generator_for(self, model_class, field):
         field_cls = type(field)
-        if not self.registry.has_key(field_cls):
-            gen_maker = self.generators.get(field_cls, default_gen_maker)
-            self.registry[field_cls] = gen_maker(field)()
-        return self.registry.get(field_cls)
+        key = (model_class, field_cls)
+        if not self.generators.has_key(key):
+            gen_maker = self.registry.get(field_cls, default_gen_maker)
+            generator = gen_maker(field)
+            self.generators[key] = generator()
+        return self.generators[key]
 
     def fields_to_generate(self, l):
         return [f for f in l if self.needs_generated_value(f)]
@@ -52,23 +62,11 @@ class Milkman(object):
         return not field.has_default() and not field.blank and not field.null    
 milkman = Milkman()
 
-def default_gen_maker(field):
-    return infinity_machine(lambda: '')
 ###
 #  Test Data Generators
 ###
-class Ref(object):
-    """
-    To work around Python's statically nested scopes.  Allows for:
-    def outer(initial_value):
-        ref = Ref(initial_value)
-        def inner(arg):
-            ref.value += 1
-            return arg + ref.value
-        return inner
-    """
-    def __init__(self, value):
-        self.value = value
+def default_gen_maker(field):
+    return loop(lambda: '')
 
 def random_choice_iterator(choices=[''], size=1):
     for i in range(0, size):
@@ -77,7 +75,7 @@ def random_choice_iterator(choices=[''], size=1):
 DEFAULT_STRING_LENGTH = 8
 def random_string_maker(field, chars=None):
     max_length = getattr(field, 'max_length', DEFAULT_STRING_LENGTH)
-    return infinity_machine(lambda: random_string(max_length, chars))
+    return loop(lambda: random_string(max_length, chars))
 
 def random_string(max_length=None, chars=None):
     if max_length is None:
@@ -88,7 +86,7 @@ def random_string(max_length=None, chars=None):
     return ''.join(x for x in i)
 
 def random_boolean(field=None):
-    return infinity_machine(lambda: random.choice((True, False)))
+    return loop(lambda: random.choice((True, False)))
 
 def random_date_string():
     y = random.randint(1900, 2020)
@@ -97,7 +95,7 @@ def random_date_string():
     return str(datetime.date(y, m, d))
 
 def random_date_string_maker(field):
-    return infinity_machine(random_date_string)
+    return loop(random_date_string)
 
 def random_datetime_string():
     h = random.randint(1, 12)
@@ -106,7 +104,7 @@ def random_datetime_string():
     return result
 
 def random_datetime_string_maker(field):
-    return infinity_machine(random_datetime_string)
+    return loop(random_datetime_string)
 
 tmpl = "%%d.%%0%dd"
 def random_decimal(field):
@@ -115,17 +113,13 @@ def random_decimal(field):
     fmt_string = tmpl % field.decimal_places
     def gen():
         return fmt_string % (random.randint(1, x), random.randint(1, y))
-    return infinity_machine(gen)
+    return loop(gen)
     
 def email_generator(addr, domain):
-    ref = Ref(0)
     template = "%s%%d@%s" % (addr, domain)
-    def maker(field):
-        def random_email():
-            ref.value += 1
-            return template % ref.value
-        return infinity_machine(random_email)
-    return maker
+    def email_gen_maker(field):
+        return sequence(lambda i: template % i)
+    return email_gen_maker
 
 milkman.add_generator(models.BooleanField, random_boolean)
 milkman.add_generator(models.CharField, random_string_maker)

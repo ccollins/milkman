@@ -16,11 +16,11 @@ class ModelTest(unittest.TestCase):
         r = milkman.deliver(Root)
         self.assertEqual(Root, r.__class__)
         self.assertTrue(bool(r.id))
-        self.assert_(r.name is not None)
+        assert r.name is not None
 
     def test_create_child(self):
         child = milkman.deliver(Child)
-        self.assert_(child.root)
+        assert child.root
     
     def test_optional_relation(self):
         sibling = milkman.deliver(Sibling)
@@ -47,7 +47,7 @@ class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
         f = Root._meta.get_field('name')
         assert milkman.needs_generated_value(f)
-        self.assert_(not f.has_default())
+        assert not f.has_default()
         self.assertEqual('', f.get_default())
 
 class FieldValueGeneratorTest(unittest.TestCase):
