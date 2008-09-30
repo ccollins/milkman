@@ -53,16 +53,14 @@ class FieldTest(unittest.TestCase):
 class FieldValueGeneratorTest(unittest.TestCase):
     def test_email_generator(self):
         f = models.EmailField()
-        g = email_generator('test', 'fake.com')
-        self.assertEquals('test1@fake.com', g(f))
-        self.assertEquals('test2@fake.com', g(f))
+        g = email_generator('test', 'fake.com')(f)()
+        self.assertEquals('test1@fake.com', g.next())
+        self.assertEquals('test2@fake.com', g.next())
 
     def test_random_str(self):
         self.assertEqual(8, len(random_string()))
         self.assertEqual('a' * 8, random_string(chars=['a']))
-        class Foo: 
-            max_length = 10
-        self.assertEqual('a' * 10, random_string(Foo, ['a']))
+        self.assertEqual('a' * 10, random_string(10, ['a']))
         
     def test_random_choice_iterator(self):
         self.assertEqual([''],[x for x in random_choice_iterator()])
