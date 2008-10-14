@@ -46,7 +46,7 @@ class RandomFieldTest(unittest.TestCase):
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
         f = Root._meta.get_field('name')
-        assert milkman.needs_generated_value(f)
+        assert MilkTruck(None).needs_generated_value(f)
         assert not f.has_default()
         self.assertEqual('', f.get_default())
 

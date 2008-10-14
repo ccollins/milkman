@@ -3,6 +3,73 @@ import random, string, datetime
 from django.db.models.fields.related import RelatedField, ManyToManyField
 from django.db import models
 
+class MilkmanRegistry(object):
+    """docstring for MilkmanRegistry"""
+    def __init__(self):
+        self.default_generators = {}
+    
+    def add_generator(self, cls, func):
+        self.default_generators[cls] = func
+    
+    def get(self, cls):
+        return self.default_generators.get(cls, lambda f: loop(lambda: ''))
+registry = MilkmanRegistry()
+
+class MilkTruck(object):
+    def __init__(self, model_class):
+        self.model_class = model_class
+        self.generators = {}
+    
+    def deliver(self, the_milkman):
+        target = self.model_class()
+        self.set_local_fields(target, the_milkman)
+        target.save()
+        self.set_m2m_fields(target, the_milkman)
+        return target
+
+    def set_local_fields(self, target, the_milkman):
+        for field in self.fields_to_generate(self.model_class._meta.local_fields):
+            if isinstance(field, RelatedField):
+                v = the_milkman.deliver(field.rel.to)
+            else:
+                v = self.generator_for(field).next()
+            setattr(target, field.name, v)
+
+    def set_m2m_fields(self, target, the_milkman):
+        for field in self.fields_to_generate(self.model_class._meta.local_many_to_many):
+            setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
+
+    def generator_for(self, field):
+        field_cls = type(field)
+        if not self.generators.has_key(field.name):
+            gen_maker = registry.get(field_cls)
+            generator = gen_maker(field)
+            self.generators[field.name] = generator()
+        return self.generators[field.name]
+
+    def fields_to_generate(self, l):
+        return [f for f in l if self.needs_generated_value(f)]
+    
+    def needs_generated_value(self, field):
+        return not field.has_default() and not field.blank and not field.null    
+
+class Milkman(object):
+    def __init__(self):
+        self.trucks = {}
+
+    def deliver(self, model_class):
+        """
+        Create a new instance of model class with all required fields populated
+        with test data from appropriate generator functions.
+        """
+        truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
+        return truck.deliver(self)
+milkman = Milkman()
+
+###
+#  Test Data Generators
+###
+
 def loop(func):
     def loop_generator(*args, **kwargs):
         while 1: 
@@ -17,54 +84,6 @@ def sequence(func):
             yield func(i, *args, **kwargs)
     return sequence_generator
 
-class Milkman(object):
-    def __init__(self):
-        self.registry = {}
-        self.generators = {}
-    
-    def add_generator(self, cls, func):
-        self.registry[cls] = func
-    
-    def deliver(self, model_class):
-        """
-        Create a new instance of model class with all required fields populated
-        with test data from appropriate generator functions.
-        """
-        target = model_class()
-        options = model_class._meta
-        for f in self.fields_to_generate(options.local_fields):
-            setattr(target, f.name, self.value_for(model_class, f))
-        target.save()
-        for f in self.fields_to_generate(options.local_many_to_many):
-            setattr(target, f.name, [self.deliver(f.rel.to)])
-        return target
-
-    def value_for(self, model_class, field):
-        if isinstance(field, RelatedField):
-            return self.deliver(field.rel.to)
-        else:
-            generator = self.generator_for(model_class, field)
-            return generator.next()
-
-    def generator_for(self, model_class, field):
-        field_cls = type(field)
-        key = (model_class, field_cls)
-        if not self.generators.has_key(key):
-            gen_maker = self.registry.get(field_cls, default_gen_maker)
-            generator = gen_maker(field)
-            self.generators[key] = generator()
-        return self.generators[key]
-
-    def fields_to_generate(self, l):
-        return [f for f in l if self.needs_generated_value(f)]
-    
-    def needs_generated_value(self, field):
-        return not field.has_default() and not field.blank and not field.null    
-milkman = Milkman()
-
-###
-#  Test Data Generators
-###
 def default_gen_maker(field):
     return loop(lambda: '')
 
@@ -121,25 +140,25 @@ def email_generator(addr, domain):
         return sequence(lambda i: template % i)
     return email_gen_maker
 
-milkman.add_generator(models.BooleanField, random_boolean)
-milkman.add_generator(models.CharField, random_string_maker)
-# milkman.add_generator(models.CommaSeparatedIntegerField, default_generator)
-milkman.add_generator(models.DateField, random_date_string_maker)
-milkman.add_generator(models.DateTimeField, random_datetime_string_maker)
-milkman.add_generator(models.DecimalField, random_decimal)
-milkman.add_generator(models.EmailField, email_generator('user', 'example.com'))
-# milkman.add_generator(models.FileField, default_generator)
-# milkman.add_generator(models.FilePathField, default_generator)
-# milkman.add_generator(models.FloatField, default_generator)
-# milkman.add_generator(models.ImageField, default_generator)
-# milkman.add_generator(models.IntegerField, default_generator)
-# milkman.add_generator(models.IPAddressField, default_generator)
-# milkman.add_generator(models.NullBooleanField, default_generator)
-# milkman.add_generator(models.PositiveIntegerField, default_generator)
-# milkman.add_generator(models.PositiveSmallIntegerField, default_generator)
-# milkman.add_generator(models.SlugField, default_generator)
-# milkman.add_generator(models.SmallIntegerField, default_generator)
-# milkman.add_generator(models.TextField, default_generator)
-# milkman.add_generator(models.TimeField, default_generator)
-# milkman.add_generator(models.URLField, default_generator)
-# milkman.add_generator(models.XMLField, default_generator)
+registry.add_generator(models.BooleanField, random_boolean)
+registry.add_generator(models.CharField, random_string_maker)
+# registry.add_generator(models.CommaSeparatedIntegerField, default_generator)
+registry.add_generator(models.DateField, random_date_string_maker)
+registry.add_generator(models.DateTimeField, random_datetime_string_maker)
+registry.add_generator(models.DecimalField, random_decimal)
+registry.add_generator(models.EmailField, email_generator('user', 'example.com'))
+# registry.add_generator(models.FileField, default_generator)
+# registry.add_generator(models.FilePathField, default_generator)
+# registry.add_generator(models.FloatField, default_generator)
+# registry.add_generator(models.ImageField, default_generator)
+# registry.add_generator(models.IntegerField, default_generator)
+# registry.add_generator(models.IPAddressField, default_generator)
+# registry.add_generator(models.NullBooleanField, default_generator)
+# registry.add_generator(models.PositiveIntegerField, default_generator)
+# registry.add_generator(models.PositiveSmallIntegerField, default_generator)
+# registry.add_generator(models.SlugField, default_generator)
+# registry.add_generator(models.SmallIntegerField, default_generator)
+# registry.add_generator(models.TextField, default_generator)
+# registry.add_generator(models.TimeField, default_generator)
+# registry.add_generator(models.URLField, default_generator)
+# registry.add_generator(models.XMLField, default_generator)
