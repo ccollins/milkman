@@ -1,4 +1,4 @@
-import random, string, datetime
+import random, string, datetime, itertools
 
 from django.db.models.fields.related import RelatedField, ManyToManyField
 from django.db import models
@@ -20,23 +20,31 @@ class MilkTruck(object):
         self.model_class = model_class
         self.generators = {}
     
-    def deliver(self, the_milkman):
+    def deliver(self, the_milkman, **explicit_values):
+        keys = []
+        if explicit_values:
+            keys = explicit_values.keys()
         target = self.model_class()
-        self.set_local_fields(target, the_milkman)
+        self.set_explicit_values(target, explicit_values)
+        self.set_local_fields(target, the_milkman, keys)
         target.save()
-        self.set_m2m_fields(target, the_milkman)
+        self.set_m2m_fields(target, the_milkman, keys)
         return target
 
-    def set_local_fields(self, target, the_milkman):
-        for field in self.fields_to_generate(self.model_class._meta.local_fields):
+    def set_explicit_values(self, target, explicit_values):
+        for k,v in explicit_values.iteritems():
+            setattr(target, k, v)
+
+    def set_local_fields(self, target, the_milkman, exclude):
+        for field in self.fields_to_generate(self.model_class._meta.local_fields, exclude):
             if isinstance(field, RelatedField):
                 v = the_milkman.deliver(field.rel.to)
             else:
                 v = self.generator_for(field).next()
             setattr(target, field.name, v)
 
-    def set_m2m_fields(self, target, the_milkman):
-        for field in self.fields_to_generate(self.model_class._meta.local_many_to_many):
+    def set_m2m_fields(self, target, the_milkman, exclude):
+        for field in self.fields_to_generate(self.model_class._meta.local_many_to_many, exclude):
             setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
 
     def generator_for(self, field):
@@ -47,8 +55,8 @@ class MilkTruck(object):
             self.generators[field.name] = generator()
         return self.generators[field.name]
 
-    def fields_to_generate(self, l):
-        return [f for f in l if self.needs_generated_value(f)]
+    def fields_to_generate(self, l, exclude):
+        return [f for f in l if f.name not in exclude and self.needs_generated_value(f)]
     
     def needs_generated_value(self, field):
         return not field.has_default() and not field.blank and not field.null    
@@ -57,13 +65,13 @@ class Milkman(object):
     def __init__(self):
         self.trucks = {}
 
-    def deliver(self, model_class):
+    def deliver(self, model_class, **explicit_values):
         """
         Create a new instance of model class with all required fields populated
         with test data from appropriate generator functions.
         """
         truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
-        return truck.deliver(self)
+        return truck.deliver(self, **explicit_values)
 milkman = Milkman()
 
 ###
@@ -140,6 +148,9 @@ def email_generator(addr, domain):
         return sequence(lambda i: template % i)
     return email_gen_maker
 
+def random_integer(field):
+    return loop(lambda: random.randint(1, 100))
+
 registry.add_generator(models.BooleanField, random_boolean)
 registry.add_generator(models.CharField, random_string_maker)
 # registry.add_generator(models.CommaSeparatedIntegerField, default_generator)
@@ -151,7 +162,7 @@ registry.add_generator(models.EmailField, email_generator('user', 'example.com')
 # registry.add_generator(models.FilePathField, default_generator)
 # registry.add_generator(models.FloatField, default_generator)
 # registry.add_generator(models.ImageField, default_generator)
-# registry.add_generator(models.IntegerField, default_generator)
+registry.add_generator(models.IntegerField, random_integer)
 # registry.add_generator(models.IPAddressField, default_generator)
 # registry.add_generator(models.NullBooleanField, default_generator)
 # registry.add_generator(models.PositiveIntegerField, default_generator)

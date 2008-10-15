@@ -18,6 +18,10 @@ class ModelTest(unittest.TestCase):
         self.assertTrue(bool(r.id))
         assert r.name is not None
 
+    def test_create_explicit(self):
+        r = milkman.deliver(Root, name='foo')
+        self.assertEqual('foo', r.name)
+
     def test_create_child(self):
         child = milkman.deliver(Child)
         assert child.root
