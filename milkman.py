@@ -21,14 +21,19 @@ class MilkTruck(object):
         self.generators = {}
     
     def deliver(self, the_milkman, **explicit_values):
-        keys = []
+        exclude = []
         if explicit_values:
-            keys = explicit_values.keys()
+            exclude = explicit_values.keys()
+        
         target = self.model_class()
+        
         self.set_explicit_values(target, explicit_values)
-        self.set_local_fields(target, the_milkman, keys)
+        self.set_local_fields(target, the_milkman, exclude)
         target.save()
-        self.set_m2m_fields(target, the_milkman, keys)
+        
+        self.set_m2m_fields(target, the_milkman, exclude)
+        target.save()
+        
         return target
 
     def set_explicit_values(self, target, explicit_values):
