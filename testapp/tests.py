@@ -40,6 +40,10 @@ class ModelTest(unittest.TestCase):
         self.assertEquals(1, len(Uncle.objects.all()))
         self.assertEquals(Uncle.objects.all()[0], aunt.uncles.all()[0])
     
+    def test_m2m_explicit(self):
+        uncle = milkman.deliver(Uncle)
+        aunt = milkman.deliver(Aunt, uncles=[uncle])
+        self.assertEquals(uncle, aunt.uncles.all()[0])
 
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):

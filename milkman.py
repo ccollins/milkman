@@ -31,14 +31,24 @@ class MilkTruck(object):
         self.set_local_fields(target, the_milkman, exclude)
         target.save()
         
+        self.set_m2m_explicit_values(target, explicit_values)
         self.set_m2m_fields(target, the_milkman, exclude)
-        target.save()
         
         return target
 
+    def is_m2m(self, field):
+        return field in [f.name for f in self.model_class._meta.local_many_to_many]
+    
+
     def set_explicit_values(self, target, explicit_values):
         for k,v in explicit_values.iteritems():
-            setattr(target, k, v)
+            if not self.is_m2m(k):
+                setattr(target, k, v)
+
+    def set_m2m_explicit_values(self, target, explicit_values):
+        for k,vs in explicit_values.iteritems():
+            if self.is_m2m(k):
+                setattr(target, k, vs)
 
     def set_local_fields(self, target, the_milkman, exclude):
         for field in self.fields_to_generate(self.model_class._meta.local_fields, exclude):
