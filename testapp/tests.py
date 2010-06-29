@@ -49,7 +49,8 @@ class RandomFieldTest(unittest.TestCase):
         root = milkman.deliver(Root)
         assert root.name
         assert isinstance(root.boolean, types.BooleanType)
-
+        assert isinstance(root.my_float, float)
+        
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
         f = Root._meta.get_field('name')
@@ -76,6 +77,6 @@ class FieldValueGeneratorTest(unittest.TestCase):
         self.assertEqual([1, 1], [s for s in random_choice_iterator([1], 2)])
         
     def test_random_float(self):
-        assert random_float(models.FloatField()) > 1
-        assert random_float(models.FloatField()) < 101
-        assert isinstance(random_float(models.FloatField()), float)
+        assert random_float() > 1
+        assert random_float() < 101
+        assert isinstance(random_float(), float)
