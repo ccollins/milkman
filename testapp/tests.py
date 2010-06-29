@@ -1,10 +1,9 @@
-from milkman import *
-from testapp.models import *
-
 import unittest
 import types
-
 from django.db import models
+from milkman import milkman, MilkTruck
+from generators import email_generator, random_choice_iterator, random_string
+from testapp.models import *
 
 MODELS = [Root, Child]
 class ModelTest(unittest.TestCase):

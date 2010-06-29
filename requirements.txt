@@ -1,0 +1,2 @@
+django
+docutils>=0.3
