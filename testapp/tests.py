@@ -2,7 +2,7 @@ import unittest
 import types
 from django.db import models
 from milkman import milkman, MilkTruck
-from generators import email_generator, random_choice_iterator, random_string
+from generators import email_generator, random_choice_iterator, random_string, random_float
 from testapp.models import *
 
 MODELS = [Root, Child]
@@ -43,7 +43,7 @@ class ModelTest(unittest.TestCase):
         uncle = milkman.deliver(Uncle)
         aunt = milkman.deliver(Aunt, uncles=[uncle])
         self.assertEquals(uncle, aunt.uncles.all()[0])
-
+    
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
@@ -75,3 +75,7 @@ class FieldValueGeneratorTest(unittest.TestCase):
         self.assertEqual(['', ''], [s for s in random_choice_iterator(size=2)])
         self.assertEqual([1, 1], [s for s in random_choice_iterator([1], 2)])
         
+    def test_random_float(self):
+        assert random_float(models.FloatField()) > 1
+        assert random_float(models.FloatField()) < 101
+        assert isinstance(random_float(models.FloatField()), float)

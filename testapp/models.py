@@ -27,7 +27,7 @@ class Root(models.Model):
 
 class Child(models.Model):
     name = models.CharField(blank=False, null=False, max_length=16)
-    root = models.ForeignKey(Root, blank=False)
+    root = models.ForeignKey(Root, blank=False, null=False)
 
 class Sibling(models.Model):
     name = models.CharField(blank=False, null=False, max_length=16)

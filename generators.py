@@ -68,6 +68,9 @@ def email_generator(addr, domain):
 
 def random_integer(field):
     return loop(lambda: random.randint(1, 100))
+    
+def random_float(field):
+    return random.randint(1, 100) + random.random()
 
 registry.add_generator(models.BooleanField, random_boolean)
 registry.add_generator(models.CharField, random_string_maker)
@@ -78,7 +81,7 @@ registry.add_generator(models.DecimalField, random_decimal)
 registry.add_generator(models.EmailField, email_generator('user', 'example.com'))
 # registry.add_generator(models.FileField, default_generator)
 # registry.add_generator(models.FilePathField, default_generator)
-# registry.add_generator(models.FloatField, default_generator)
+registry.add_generator(models.FloatField, random_float)
 # registry.add_generator(models.ImageField, default_generator)
 registry.add_generator(models.IntegerField, random_integer)
 # registry.add_generator(models.IPAddressField, default_generator)
