@@ -1,7 +1,6 @@
 import random, string, datetime, itertools
-from django.db import models
-from milkman import registry, loop
-        
+from common import loop
+
 def sequence(func):
     def sequence_generator(*args, **kwargs):
         i = 0
@@ -74,26 +73,3 @@ def random_float_maker(field):
 
 def random_float():
     return random.randint(1, 100) + random.random()
-
-registry.add_generator(models.BooleanField, random_boolean)
-registry.add_generator(models.CharField, random_string_maker)
-# registry.add_generator(models.CommaSeparatedIntegerField, default_generator)
-registry.add_generator(models.DateField, random_date_string_maker)
-registry.add_generator(models.DateTimeField, random_datetime_string_maker)
-registry.add_generator(models.DecimalField, random_decimal)
-registry.add_generator(models.EmailField, email_generator('user', 'example.com'))
-# registry.add_generator(models.FileField, default_generator)
-# registry.add_generator(models.FilePathField, default_generator)
-registry.add_generator(models.FloatField, random_float_maker)
-# registry.add_generator(models.ImageField, default_generator)
-registry.add_generator(models.IntegerField, random_integer)
-# registry.add_generator(models.IPAddressField, default_generator)
-# registry.add_generator(models.NullBooleanField, default_generator)
-# registry.add_generator(models.PositiveIntegerField, default_generator)
-# registry.add_generator(models.PositiveSmallIntegerField, default_generator)
-# registry.add_generator(models.SlugField, default_generator)
-# registry.add_generator(models.SmallIntegerField, default_generator)
-# registry.add_generator(models.TextField, default_generator)
-# registry.add_generator(models.TimeField, default_generator)
-# registry.add_generator(models.URLField, default_generator)
-# registry.add_generator(models.XMLField, default_generator)

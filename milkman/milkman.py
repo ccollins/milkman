@@ -1,11 +1,6 @@
 from django.db.models.fields.related import RelatedField, ManyToManyField
+from common import loop
 
-def loop(func):
-    def loop_generator(*args, **kwargs):
-        while 1: 
-            yield func(*args, **kwargs)
-    return loop_generator
-    
 class MilkmanRegistry(object):
     """docstring for MilkmanRegistry"""
     def __init__(self):
@@ -16,7 +11,6 @@ class MilkmanRegistry(object):
     
     def get(self, cls):
         return self.default_generators.get(cls, lambda f: loop(lambda: ''))
-registry = MilkmanRegistry()
 
 class MilkTruck(object):
     def __init__(self, model_class):
@@ -58,14 +52,14 @@ class MilkTruck(object):
             if isinstance(field, RelatedField):
                 v = the_milkman.deliver(field.rel.to)
             else:
-                v = self.generator_for(field).next()
+                v = self.generator_for(the_milkman.registry, field).next()
             setattr(target, field.name, v)
 
     def set_m2m_fields(self, target, the_milkman, exclude):
         for field in self.fields_to_generate(self.model_class._meta.local_many_to_many, exclude):
             setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
 
-    def generator_for(self, field):
+    def generator_for(self, registry, field):
         field_cls = type(field)
         if not self.generators.has_key(field.name):
             gen_maker = registry.get(field_cls)
@@ -80,8 +74,9 @@ class MilkTruck(object):
         return not field.has_default() and not field.blank and not field.null    
 
 class Milkman(object):
-    def __init__(self):
+    def __init__(self, registry):
         self.trucks = {}
+        self.registry = registry
 
     def deliver(self, model_class, **explicit_values):
         """
@@ -90,4 +85,3 @@ class Milkman(object):
         """
         truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
         return truck.deliver(self, **explicit_values)
-milkman = Milkman()
