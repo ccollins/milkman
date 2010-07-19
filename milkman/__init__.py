@@ -5,6 +5,7 @@ import generators
 registry = MilkmanRegistry()
 registry.add_generator(models.BooleanField, generators.random_boolean)
 registry.add_generator(models.CharField, generators.random_string_maker)
+registry.add_generator(models.SlugField, generators.random_string_maker)
 registry.add_generator(models.DateField, generators.random_date_string_maker)
 registry.add_generator(models.DateTimeField, generators.random_datetime_string_maker)
 registry.add_generator(models.DecimalField, generators.random_decimal)
