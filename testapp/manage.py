@@ -2,7 +2,7 @@
 import sys
 from django.core.management import execute_manager
 
-sys.path.append('..')
+sys.path.append('../')
 try:
     from testapp import settings 
 except ImportError:

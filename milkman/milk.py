@@ -1,8 +1,10 @@
 from django.db.models.fields.related import RelatedField, ManyToManyField
-from common import loop
+
+from milkman.generators import loop
+
 
 class MilkmanRegistry(object):
-    """docstring for MilkmanRegistry"""
+    
     def __init__(self):
         self.default_generators = {}
     
@@ -11,6 +13,7 @@ class MilkmanRegistry(object):
     
     def get(self, cls):
         return self.default_generators.get(cls, lambda f: loop(lambda: ''))
+
 
 class MilkTruck(object):
     def __init__(self, model_class):
@@ -36,7 +39,6 @@ class MilkTruck(object):
     def is_m2m(self, field):
         return field in [f.name for f in self.model_class._meta.local_many_to_many]
     
-
     def set_explicit_values(self, target, explicit_values):
         for k,v in explicit_values.iteritems():
             if not self.is_m2m(k):
@@ -72,6 +74,7 @@ class MilkTruck(object):
     
     def needs_generated_value(self, field):
         return not field.has_default() and not field.blank and not field.null    
+
 
 class Milkman(object):
     def __init__(self, registry):
