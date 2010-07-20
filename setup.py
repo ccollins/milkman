@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name="milkman",
-    version="0.2",
+    version="0.2.1",
     packages = ["milkman"],
     author="Wilkes Joiner, Chuck Collins",
     author_email="chuck.collins@gmail.com",
