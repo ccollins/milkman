@@ -9,4 +9,7 @@ setup(name="milkman",
     install_requires=["docutils>=0.3","django"],
     license = "MIT",
     keywords = "django testing mock stub",
+    description = "Testing django without all the fixtures",
+    url="http://testdjango.org/",
+    long_description=open("docs/index.txt", "rb").read()
 )
