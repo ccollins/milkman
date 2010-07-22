@@ -1,6 +1,5 @@
 from setuptools import setup
 
-
 setup(name="milkman",
     version="0.2.2",
     packages = ["milkman"],
