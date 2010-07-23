@@ -27,6 +27,7 @@ class MilkmanRegistry(object):
         registry.add_generator(models.EmailField, generators.email_generator('user', 'example.com'))
         registry.add_generator(models.FloatField, generators.random_float_maker)
         registry.add_generator(models.IntegerField, generators.random_integer)
+        return registry
 
 
 class MilkTruck(object):

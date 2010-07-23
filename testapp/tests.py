@@ -1,8 +1,8 @@
 import unittest
 import types
 from django.db import models
-from milkman import milkman
-from milkman.milk import MilkTruck
+from milkman.dairy import milkman
+from milkman.dairy import MilkTruck
 from milkman.generators import email_generator, random_choice_iterator, random_string, random_float
 from testapp.models import *
 
