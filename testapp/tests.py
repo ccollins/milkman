@@ -3,7 +3,7 @@ import types
 from django.db import models
 from milkman.dairy import milkman
 from milkman.dairy import MilkTruck
-from milkman.generators import email_generator, random_choice_iterator, random_string, random_float
+from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker
 from testapp.models import *
 
 MODELS = [Root, Child]
@@ -81,3 +81,9 @@ class FieldValueGeneratorTest(unittest.TestCase):
         assert random_float() > 1
         assert random_float() < 101
         assert isinstance(random_float(), float)
+        
+    def test_random_ipaddress(self):
+        f = models.IPAddressField()
+        ip = random_ipaddress_maker(f)().next()
+        ip = ip.split('.')
+        self.assertEquals(len(ip), 4)

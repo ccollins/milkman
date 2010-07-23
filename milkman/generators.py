@@ -101,3 +101,7 @@ def random_float_maker(field):
 def random_float():
     return random.randint(1, 100) + random.random()
 
+    
+def random_ipaddress_maker(field):
+    return loop(lambda: "%s.%s.%s.%s" % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+
