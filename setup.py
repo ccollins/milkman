@@ -21,5 +21,5 @@ setup(name="milkman",
     keywords = "django testing mock stub",
     description = "Testing django without all the fixtures",
     url="http://testdjango.org/",
-    long_description=open("docs/index.txt", "rb").read()
+    long_description=long_description
 )
