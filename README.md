@@ -4,7 +4,7 @@ Milkman - Easy django model object generation
 Quick Examples
 --------------
 
-	from milkman import milkman
+	from milkman.dairy import milkman
 	from myapp.models import Video, Editor
 	
 	#I just want a random video in the db to test with
