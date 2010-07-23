@@ -1,5 +1,4 @@
 import datetime
-import itertools
 import random
 import string
 

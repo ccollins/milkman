@@ -1,6 +1,7 @@
-from django.db.models.fields.related import RelatedField, ManyToManyField
+from django.db import models
+from django.db.models.fields.related import RelatedField
 
-from milkman.generators import loop
+from milkman import generators
 
 
 class MilkmanRegistry(object):
@@ -12,7 +13,20 @@ class MilkmanRegistry(object):
         self.default_generators[cls] = func
     
     def get(self, cls):
-        return self.default_generators.get(cls, lambda f: loop(lambda: ''))
+        return self.default_generators.get(cls, lambda f: generators.loop(lambda: ''))
+
+    @staticmethod
+    def get_default():
+        registry = MilkmanRegistry()
+        registry.add_generator(models.BooleanField, generators.random_boolean)
+        registry.add_generator(models.CharField, generators.random_string_maker)
+        registry.add_generator(models.SlugField, generators.random_string_maker)
+        registry.add_generator(models.DateField, generators.random_date_string_maker)
+        registry.add_generator(models.DateTimeField, generators.random_datetime_string_maker)
+        registry.add_generator(models.DecimalField, generators.random_decimal)
+        registry.add_generator(models.EmailField, generators.email_generator('user', 'example.com'))
+        registry.add_generator(models.FloatField, generators.random_float_maker)
+        registry.add_generator(models.IntegerField, generators.random_integer)
 
 
 class MilkTruck(object):
@@ -88,3 +102,6 @@ class Milkman(object):
         """
         truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
         return truck.deliver(self, **explicit_values)
+
+
+milkman = Milkman(MilkmanRegistry.get_default())

@@ -1,7 +1,18 @@
 from setuptools import setup
 
+
+VERSION = __import__("milkman").__version__
+
+
+long_description = ""
+try:
+    long_description = open("docs/index.txt", "rb").read()
+except:
+    pass
+
+
 setup(name="milkman",
-    version="0.2.2",
+    version=VERSION,
     packages = ["milkman"],
     author="Wilkes Joiner, Chuck Collins",
     author_email="chuck.collins@gmail.com",
