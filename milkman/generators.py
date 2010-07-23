@@ -105,3 +105,15 @@ def random_float():
 def random_ipaddress_maker(field):
     return loop(lambda: "%s.%s.%s.%s" % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
 
+
+def random_comma_seperated_integer(max_length):
+    if max_length is None:
+        max_length = DEFAULT_STRING_LENGTH
+        
+    max_length = (int)(max_length/2)
+    chars=['0','1','2','3','4','5','6','7','8','9']
+    return reduce(lambda x,y: "%s,%s" %(x,y), random_string(max_length, chars)).lstrip(',')
+        
+def random_comma_seperated_integer_maker(field):
+    max_length = getattr(field, 'max_length', DEFAULT_STRING_LENGTH)
+    return loop(lambda: random_comma_seperated_integer(max_length))

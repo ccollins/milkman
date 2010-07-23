@@ -3,7 +3,7 @@ import types
 from django.db import models
 from milkman.dairy import milkman
 from milkman.dairy import MilkTruck
-from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker
+from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker
 from testapp.models import *
 
 MODELS = [Root, Child]
@@ -87,3 +87,8 @@ class FieldValueGeneratorTest(unittest.TestCase):
         ip = random_ipaddress_maker(f)().next()
         ip = ip.split('.')
         self.assertEquals(len(ip), 4)
+        
+    def test_random_comma_seperated_integer_maker(self):
+        f = models.CommaSeparatedIntegerField()
+        v = random_comma_seperated_integer_maker(f)().next()
+        self.assertEquals(len(v.split(',')), 4)
