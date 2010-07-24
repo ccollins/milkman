@@ -58,6 +58,8 @@ class RandomFieldTest(unittest.TestCase):
         assert isinstance(root.email, str)
         assert isinstance(root.my_float, float)
         assert isinstance(root.integer, int)
+        assert isinstance(root.big_integer, int)
+        assert isinstance(root.small_integer, int)
         assert isinstance(root.ip, str)
         assert isinstance(root.s, str)
         assert isinstance(root.mytime, str)

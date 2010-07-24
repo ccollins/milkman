@@ -1,6 +1,7 @@
 from django.db import models
 
 class Root(models.Model):
+    big_integer = models.BigIntegerField(blank=False, null=False)
     name = models.CharField(blank=False, null=False,max_length=16)
     boolean = models.BooleanField(blank=False, null=False)
     csi = models.CommaSeparatedIntegerField(blank=False, null=False, max_length=12)
@@ -18,7 +19,7 @@ class Root(models.Model):
     # = models.PositiveIntegerField(blank=False, null=False)
     # = models.PositiveSmallIntegerField(blank=False, null=False)
     s = models.SlugField(blank=False, null=False)
-    # = models.SmallIntegerField(blank=False, null=False)
+    small_integer = models.SmallIntegerField(blank=False, null=False)
     # = models.TextField(blank=False, null=False)
     mytime = models.TimeField(blank=False, null=False)
     # = models.URLField(blank=False, null=False)

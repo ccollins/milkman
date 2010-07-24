@@ -51,8 +51,10 @@ def random_string(max_length=None, chars=None):
 def random_boolean_maker(field=None):
     return loop(lambda: random.choice((True, False)))
 
+
 def random_null_boolean_maker(field=None):
     return loop(lambda: random.choice((None, True, False)))
+
 
 def random_date_string():
     y = random.randint(1900, 2020)
@@ -99,10 +101,18 @@ def email_generator(addr, domain):
     return email_gen_maker
 
 
-def random_integer(field):
+def random_integer_maker(field, low=1, high=100):
     return loop(lambda: random.randint(1, 100))
 
 
+def random_big_integer_maker(field):
+    return random_integer_maker(field, low=-9223372036854775808, high=9223372036854775807)
+
+
+def random_small_integer_maker(field):
+    return random_integer_maker(field, low=0, high=1)
+    
+    
 def random_float_maker(field):
     return loop(lambda: random_float())
 
