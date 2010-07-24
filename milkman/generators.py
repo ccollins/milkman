@@ -59,6 +59,13 @@ def random_date_string():
     return str(datetime.date(y, m, d))
 
 
+def random_time_string():
+    h = random.randint(0, 23)
+    m = random.randint(0, 59)
+    s = random.randint(0, 59)
+    return str(datetime.time(h, m, s))
+
+
 def random_date_string_maker(field):
     return loop(random_date_string)
 
@@ -74,7 +81,7 @@ def random_datetime_string_maker(field):
     return loop(random_datetime_string)
 
 
-def random_decimal(field):
+def random_decimal_maker(field):
     x = pow(10, field.max_digits - field.decimal_places) - 1
     y = pow(10, field.decimal_places) - 1
     fmt_string = DECIMAL_TEMPLATE % field.decimal_places
@@ -113,7 +120,12 @@ def random_comma_seperated_integer(max_length):
     max_length = (int)(max_length/2)
     chars=['0','1','2','3','4','5','6','7','8','9']
     return reduce(lambda x,y: "%s,%s" %(x,y), random_string(max_length, chars)).lstrip(',')
+    
         
 def random_comma_seperated_integer_maker(field):
     max_length = getattr(field, 'max_length', DEFAULT_STRING_LENGTH)
     return loop(lambda: random_comma_seperated_integer(max_length))
+    
+    
+def random_time_string_maker(field):
+    return loop(lambda: random_time_string())

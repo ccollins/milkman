@@ -1,9 +1,10 @@
 import unittest
 import types
+import string
 from django.db import models
 from milkman.dairy import milkman
 from milkman.dairy import MilkTruck
-from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker
+from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker, random_time_string_maker
 from testapp.models import *
 
 MODELS = [Root, Child]
@@ -50,7 +51,17 @@ class RandomFieldTest(unittest.TestCase):
         root = milkman.deliver(Root)
         assert root.name
         assert isinstance(root.boolean, types.BooleanType)
+        assert isinstance(root.csi, str)
+        assert isinstance(root.df, str)
+        assert isinstance(root.dt, str)
+        assert isinstance(root.decimal, str)
+        assert isinstance(root.email, str)
         assert isinstance(root.my_float, float)
+        assert isinstance(root.integer, int)
+        assert isinstance(root.ip, str)
+        assert isinstance(root.s, str)
+        assert isinstance(root.mytime, str)
+  
         
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
@@ -92,3 +103,9 @@ class FieldValueGeneratorTest(unittest.TestCase):
         f = models.CommaSeparatedIntegerField()
         v = random_comma_seperated_integer_maker(f)().next()
         self.assertEquals(len(v.split(',')), 4)
+        
+    def test_timefield_maker(self):
+        f = models.TimeField()
+        v = random_time_string_maker(f)().next()
+        times = v.split(':')
+        self.assertEquals(len(times), 3)
