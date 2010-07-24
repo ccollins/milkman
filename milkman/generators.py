@@ -48,9 +48,11 @@ def random_string(max_length=None, chars=None):
     return ''.join(x for x in i)
 
 
-def random_boolean(field=None):
+def random_boolean_maker(field=None):
     return loop(lambda: random.choice((True, False)))
 
+def random_null_boolean_maker(field=None):
+    return loop(lambda: random.choice((None, True, False)))
 
 def random_date_string():
     y = random.randint(1900, 2020)

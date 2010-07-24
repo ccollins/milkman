@@ -18,7 +18,7 @@ class MilkmanRegistry(object):
     @staticmethod
     def register():
         registry = MilkmanRegistry()
-        registry.add_generator(models.BooleanField, generators.random_boolean)
+        registry.add_generator(models.BooleanField, generators.random_boolean_maker)
         registry.add_generator(models.CharField, generators.random_string_maker)
         registry.add_generator(models.CommaSeparatedIntegerField, generators.random_comma_seperated_integer_maker)
         registry.add_generator(models.DateField, generators.random_date_string_maker)
@@ -28,6 +28,7 @@ class MilkmanRegistry(object):
         registry.add_generator(models.FloatField, generators.random_float_maker)
         registry.add_generator(models.IntegerField, generators.random_integer)
         registry.add_generator(models.IPAddressField, generators.random_ipaddress_maker)
+        registry.add_generator(models.NullBooleanField, generators.random_null_boolean_maker)
         registry.add_generator(models.SlugField, generators.random_string_maker)
         registry.add_generator(models.TimeField, generators.random_time_string_maker)
         # registry.add_generator(models.AutoField, default_generator)
@@ -35,7 +36,6 @@ class MilkmanRegistry(object):
         # registry.add_generator(models.FileField, default_generator)
         # registry.add_generator(models.FilePathField, default_generator)
         # registry.add_generator(models.ImageField, default_generator)
-        # registry.add_generator(models.NullBooleanField, default_generator)
         # registry.add_generator(models.PositiveIntegerField, default_generator)
         # registry.add_generator(models.PositiveSmallIntegerField, default_generator)
         # registry.add_generator(models.SmallIntegerField, default_generator)

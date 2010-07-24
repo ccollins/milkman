@@ -14,7 +14,7 @@ class Root(models.Model):
     # = models.ImageField(blank=False, null=False)
     integer = models.IntegerField(blank=False, null=False)
     ip = models.IPAddressField(blank=False, null=False)
-    # = models.NullBooleanField(blank=False, null=False)
+    null_boolean = models.NullBooleanField(blank=False, null=False)
     # = models.PositiveIntegerField(blank=False, null=False)
     # = models.PositiveSmallIntegerField(blank=False, null=False)
     s = models.SlugField(blank=False, null=False)

@@ -50,7 +50,7 @@ class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
         assert root.name
-        assert isinstance(root.boolean, types.BooleanType)
+        assert isinstance(root.boolean, bool)
         assert isinstance(root.csi, str)
         assert isinstance(root.df, str)
         assert isinstance(root.dt, str)
@@ -61,6 +61,7 @@ class RandomFieldTest(unittest.TestCase):
         assert isinstance(root.ip, str)
         assert isinstance(root.s, str)
         assert isinstance(root.mytime, str)
+        assert (isinstance(root.null_boolean, bool) or isinstance(root.null_boolean, types.NoneType))
   
         
 class FieldTest(unittest.TestCase):
