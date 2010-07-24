@@ -63,6 +63,8 @@ class RandomFieldTest(unittest.TestCase):
         assert isinstance(root.ip, str)
         assert isinstance(root.s, str)
         assert isinstance(root.mytime, str)
+        assert isinstance(root.positive_integer, int)
+        assert isinstance(root.small_positive_integer, int)
         assert (isinstance(root.null_boolean, bool) or isinstance(root.null_boolean, types.NoneType))
   
         

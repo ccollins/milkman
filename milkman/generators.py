@@ -101,7 +101,7 @@ def email_generator(addr, domain):
     return email_gen_maker
 
 
-def random_integer_maker(field, low=1, high=100):
+def random_integer_maker(field, low=-100, high=100):
     return loop(lambda: random.randint(1, 100))
 
 
@@ -110,7 +110,15 @@ def random_big_integer_maker(field):
 
 
 def random_small_integer_maker(field):
-    return random_integer_maker(field, low=0, high=1)
+    return random_integer_maker(field, low=-1, high=1)
+
+
+def random_small_positive_integer_maker(field):
+    return random_integer_maker(field, low=0, high=1)    
+
+
+def random_positive_integer_maker(field):
+    return random_integer_maker(field, low=0, high=100)
     
     
 def random_float_maker(field):
