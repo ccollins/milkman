@@ -1,20 +1,18 @@
 import datetime
 import random
 import string
-
+import sys
 
 DEFAULT_STRING_LENGTH = 8
 DECIMAL_TEMPLATE = "%%d.%%0%dd"
 EMAIL_TEMPLATE = "%s%%d@%s"
 DATETIME_TEMPLATE = "%s %d:%d"
 
-
 def loop(func):
     def loop_generator(*args, **kwargs):
         while 1: 
             yield func(*args, **kwargs)
     return loop_generator
-
 
 def sequence(func):
     def sequence_generator(*args, **kwargs):
@@ -24,20 +22,16 @@ def sequence(func):
             yield func(i, *args, **kwargs)
     return sequence_generator
 
-
 def default_gen_maker(field):
     return loop(lambda: '')
-
 
 def random_choice_iterator(choices=[''], size=1):
     for i in range(0, size):
         yield random.choice(choices)
 
-
 def random_string_maker(field, chars=None):
     max_length = getattr(field, 'max_length', DEFAULT_STRING_LENGTH)
     return loop(lambda: random_string(max_length, chars))
-
 
 def random_string(max_length=None, chars=None):
     if max_length is None:
@@ -47,10 +41,8 @@ def random_string(max_length=None, chars=None):
     i = random_choice_iterator(chars, max_length)
     return ''.join(x for x in i)
 
-
-def random_boolean(field=None):
+def random_boolean_maker(field=None):
     return loop(lambda: random.choice((True, False)))
-
 
 def random_date_string():
     y = random.randint(1900, 2020)
@@ -58,10 +50,8 @@ def random_date_string():
     d = random.randint(1, 28)
     return str(datetime.date(y, m, d))
 
-
 def random_date_string_maker(field):
     return loop(random_date_string)
-
 
 def random_datetime_string():
     h = random.randint(1, 12)
@@ -69,12 +59,10 @@ def random_datetime_string():
     result = DATETIME_TEMPLATE % (random_date_string(), h, m)
     return result
 
-
 def random_datetime_string_maker(field):
     return loop(random_datetime_string)
 
-
-def random_decimal(field):
+def random_decimal_maker(field):
     x = pow(10, field.max_digits - field.decimal_places) - 1
     y = pow(10, field.decimal_places) - 1
     fmt_string = DECIMAL_TEMPLATE % field.decimal_places
@@ -82,29 +70,29 @@ def random_decimal(field):
         return fmt_string % (random.randint(1, x), random.randint(1, y))
     return loop(gen)
 
-
 def email_generator(addr, domain):
     template = EMAIL_TEMPLATE % (addr, domain)
     def email_gen_maker(field):
         return sequence(lambda i: template % i)
     return email_gen_maker
 
-
-def random_integer(field):
-    return loop(lambda: random.randint(1, 100))
-
+def random_integer_maker(field):
+    return loop(lambda: random.randint(-sys.maxint-1, sys.maxint))
 
 def random_float_maker(field):
     return loop(lambda: random_float())
-
+    
+def random_auto_field_maker(field):
+    return loop(lambda: random.randint(1, sys.maxint))
+    
+def random_big_integer_maker(field):
+    return loop(lambda: random.randint(-9223372036854775808, 9223372036854775808))
 
 def random_float():
-    return random.randint(1, 100) + random.random()
-
+    return random.uniform(sys.float_info.min, sys.float_info.max)
     
 def random_ipaddress_maker(field):
     return loop(lambda: "%s.%s.%s.%s" % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-
 
 def random_comma_seperated_integer(max_length):
     if max_length is None:

@@ -1,5 +1,6 @@
 import unittest
 import types
+import sys
 from django.db import models
 from milkman.dairy import milkman
 from milkman.dairy import MilkTruck
@@ -15,12 +16,12 @@ class ModelTest(unittest.TestCase):
     def test_create(self):
         r = milkman.deliver(Root)
         self.assertEqual(Root, r.__class__)
-        self.assertTrue(bool(r.id))
-        assert r.name is not None
+        self.assertTrue(bool(r.my_auto))
+        assert r.my_char is not None
 
     def test_create_explicit(self):
-        r = milkman.deliver(Root, name='foo')
-        self.assertEqual('foo', r.name)
+        r = milkman.deliver(Root, my_char='foo')
+        self.assertEqual('foo', r.my_char)
 
     def test_create_child(self):
         child = milkman.deliver(Child)
@@ -48,13 +49,13 @@ class ModelTest(unittest.TestCase):
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
-        assert root.name
-        assert isinstance(root.boolean, types.BooleanType)
+        assert root.my_char
+        assert isinstance(root.my_boolean, types.BooleanType)
         assert isinstance(root.my_float, float)
         
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
-        f = Root._meta.get_field('name')
+        f = Root._meta.get_field('my_char')
         assert MilkTruck(None).needs_generated_value(f)
         assert not f.has_default()
         self.assertEqual('', f.get_default())
@@ -78,8 +79,8 @@ class FieldValueGeneratorTest(unittest.TestCase):
         self.assertEqual([1, 1], [s for s in random_choice_iterator([1], 2)])
         
     def test_random_float(self):
-        assert random_float() > 1
-        assert random_float() < 101
+        assert random_float() >= sys.float_info.min
+        assert random_float() <= sys.float_info.max
         assert isinstance(random_float(), float)
         
     def test_random_ipaddress(self):
