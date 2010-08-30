@@ -1,10 +1,11 @@
 import unittest
 import types
 import sys
+import string
 from django.db import models
 from milkman.dairy import milkman
 from milkman.dairy import MilkTruck
-from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker
+from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker, random_time_string_maker
 from testapp.models import *
 
 MODELS = [Root, Child]
@@ -49,10 +50,25 @@ class ModelTest(unittest.TestCase):
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
-        assert root.my_char
-        assert isinstance(root.my_boolean, types.BooleanType)
+        assert isinstance(root.my_auto, int)
+        assert isinstance(root.my_biginteger, long)
+        assert isinstance(root.my_boolean, bool)
+        assert isinstance(root.my_char, str)
+        assert isinstance(root.my_commaseperatedinteger, str)
+        assert isinstance(root.my_date, str)
+        assert isinstance(root.my_datetime, str)
+        assert isinstance(root.my_decimal, str)
+        assert isinstance(root.my_email, str)
         assert isinstance(root.my_float, float)
-        
+        assert isinstance(root.my_integer, int)
+        assert isinstance(root.my_ip, str)
+        assert (isinstance(root.my_nullboolean, bool) or isinstance(root.my_nullboolean, types.NoneType))
+        assert isinstance(root.my_positiveinteger, int)
+        assert isinstance(root.my_positivesmallinteger, int)
+        assert isinstance(root.my_slug, str)
+        assert isinstance(root.my_smallinteger, int)
+        assert isinstance(root.my_time, str)
+    
 class FieldTest(unittest.TestCase):
     def test_needs_generated_value(self):
         f = Root._meta.get_field('my_char')
@@ -93,3 +109,9 @@ class FieldValueGeneratorTest(unittest.TestCase):
         f = models.CommaSeparatedIntegerField()
         v = random_comma_seperated_integer_maker(f)().next()
         self.assertEquals(len(v.split(',')), 4)
+        
+    def test_timefield_maker(self):
+        f = models.TimeField()
+        v = random_time_string_maker(f)().next()
+        times = v.split(':')
+        self.assertEquals(len(times), 3)

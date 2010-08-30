@@ -44,11 +44,20 @@ def random_string(max_length=None, chars=None):
 def random_boolean_maker(field=None):
     return loop(lambda: random.choice((True, False)))
 
+def random_null_boolean_maker(field=None):
+    return loop(lambda: random.choice((None, True, False)))
+
 def random_date_string():
     y = random.randint(1900, 2020)
     m = random.randint(1, 12)
     d = random.randint(1, 28)
     return str(datetime.date(y, m, d))
+
+def random_time_string():
+    h = random.randint(0, 23)
+    m = random.randint(0, 59)
+    s = random.randint(0, 59)
+    return str(datetime.time(h, m, s))
 
 def random_date_string_maker(field):
     return loop(random_date_string)
@@ -76,17 +85,26 @@ def email_generator(addr, domain):
         return sequence(lambda i: template % i)
     return email_gen_maker
 
-def random_integer_maker(field):
-    return loop(lambda: random.randint(-sys.maxint-1, sys.maxint))
+def random_integer_maker(field, low=-sys.maxint-1, high=sys.maxint):
+    return loop(lambda: random.randint(low, high))
 
+def random_big_integer_maker(field):
+    return random_integer_maker(field, low=-9223372036854775808, high=9223372036854775807)
+
+def random_small_integer_maker(field):
+    return random_integer_maker(field, low=-1, high=1)
+
+def random_small_positive_integer_maker(field):
+    return random_integer_maker(field, low=0, high=1)    
+
+def random_positive_integer_maker(field):
+    return random_integer_maker(field, low=0) 
+    
 def random_float_maker(field):
     return loop(lambda: random_float())
     
 def random_auto_field_maker(field):
     return loop(lambda: random.randint(1, sys.maxint))
-    
-def random_big_integer_maker(field):
-    return loop(lambda: random.randint(-9223372036854775808, 9223372036854775808))
 
 def random_float():
     return random.uniform(sys.float_info.min, sys.float_info.max)
@@ -101,7 +119,10 @@ def random_comma_seperated_integer(max_length):
     max_length = (int)(max_length/2)
     chars=['0','1','2','3','4','5','6','7','8','9']
     return reduce(lambda x,y: "%s,%s" %(x,y), random_string(max_length, chars)).lstrip(',')
-        
+     
 def random_comma_seperated_integer_maker(field):
     max_length = getattr(field, 'max_length', DEFAULT_STRING_LENGTH)
     return loop(lambda: random_comma_seperated_integer(max_length))
+    
+def random_time_string_maker(field):
+    return loop(lambda: random_time_string())

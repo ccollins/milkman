@@ -28,16 +28,16 @@ class MilkmanRegistry(object):
         registry.add_generator(models.FloatField, generators.random_float_maker)
         registry.add_generator(models.IntegerField, generators.random_integer_maker)
         registry.add_generator(models.IPAddressField, generators.random_ipaddress_maker)
+        registry.add_generator(models.NullBooleanField, generators.random_null_boolean_maker)
+        registry.add_generator(models.PositiveIntegerField, generators.random_positive_integer_maker)
+        registry.add_generator(models.PositiveSmallIntegerField, generators.random_small_positive_integer_maker)
         registry.add_generator(models.SlugField, generators.random_string_maker)
+        registry.add_generator(models.SmallIntegerField, generators.random_small_integer_maker)
+        registry.add_generator(models.TimeField, generators.random_time_string_maker)
         # registry.add_generator(models.FileField, default_generator)
         # registry.add_generator(models.FilePathField, default_generator)
         # registry.add_generator(models.ImageField, default_generator)
-        # registry.add_generator(models.NullBooleanField, default_generator)
-        # registry.add_generator(models.PositiveIntegerField, default_generator)
-        # registry.add_generator(models.PositiveSmallIntegerField, default_generator)
-        # registry.add_generator(models.SmallIntegerField, default_generator)
         # registry.add_generator(models.TextField, default_generator)
-        # registry.add_generator(models.TimeField, default_generator)
         # registry.add_generator(models.URLField, default_generator)
         # registry.add_generator(models.XMLField, default_generator)
         return registry
@@ -108,10 +108,6 @@ class Milkman(object):
         self.registry = registry
 
     def deliver(self, model_class, **explicit_values):
-        """
-        Create a new instance of model class with all required fields populated
-        with test data from appropriate generator functions.
-        """
         truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
         return truck.deliver(self, **explicit_values)
 
