@@ -115,3 +115,12 @@ class FieldValueGeneratorTest(unittest.TestCase):
         v = random_time_string_maker(f)().next()
         times = v.split(':')
         self.assertEquals(len(times), 3)
+
+class ManyToManyThroughTest(unittest.TestCase):
+    def test_through_model(self):
+        uncle = milkman.deliver(CounselingUncle)
+        self.assertTrue(isinstance(uncle, CounselingUncle))
+    
+    def test_model(self):
+        child = milkman.deliver(EstrangedChild)
+        self.assertTrue(isinstance(child, EstrangedChild))
