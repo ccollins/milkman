@@ -8,7 +8,7 @@ from milkman.dairy import MilkTruck
 from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker, random_time_string_maker
 from testapp.models import *
 
-MODELS = [Root, Child]
+MODELS = [Root, Child, Uncle]
 class ModelTest(unittest.TestCase):
     def tearDown(self):
         for m in MODELS:
