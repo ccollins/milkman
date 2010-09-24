@@ -20,6 +20,6 @@ setup(name="milkman",
     license = "MIT",
     keywords = "django testing mock stub",
     description = "Testing django without all the fixtures",
-    url="http://testdjango.org/",
+    url="http://github.com/ccollins/milkman/",
     long_description=long_description
 )
