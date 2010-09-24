@@ -52,4 +52,4 @@ class CounselingUncle(models.Model):
 
 class EstrangedChild(models.Model):
     name = models.CharField(max_length=16)
-    cousins = models.ManyToManyField(Uncle, through=CounselingUncle)
+    uncles = models.ManyToManyField(Uncle, through=CounselingUncle)

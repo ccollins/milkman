@@ -47,6 +47,26 @@ class ModelTest(unittest.TestCase):
         aunt = milkman.deliver(Aunt, uncles=[uncle])
         self.assertEquals(uncle, aunt.uncles.all()[0])
     
+    def test_m2m_through_model(self):
+        couseling_uncle = milkman.deliver(CounselingUncle)
+        self.assertTrue(isinstance(couseling_uncle, CounselingUncle))
+        self.assertEquals(couseling_uncle.cousin.uncles.all().count(), 1)
+        self.assertTrue(len(couseling_uncle.cousin.name) > 0)
+        self.assertTrue(len(couseling_uncle.uncle.name) > 0)
+    
+    def test_m2m_model(self):
+        child = milkman.deliver(EstrangedChild)
+        self.assertTrue(isinstance(child, EstrangedChild))
+        self.assertEquals(child.uncles.all().count(), 0)
+        self.assertTrue(len(child.name) > 0)
+    
+    def test_m2m_model_explicit_add(self):
+        child = milkman.deliver(EstrangedChild)
+        couseling_uncle = milkman.deliver(CounselingUncle, cousin=child)
+        self.assertTrue(isinstance(child, EstrangedChild))
+        self.assertEquals(child.uncles.all().count(), 1)
+        self.assertTrue(len(child.name) > 0)
+
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
@@ -116,11 +136,3 @@ class FieldValueGeneratorTest(unittest.TestCase):
         times = v.split(':')
         self.assertEquals(len(times), 3)
 
-class ManyToManyThroughTest(unittest.TestCase):
-    def test_through_model(self):
-        uncle = milkman.deliver(CounselingUncle)
-        self.assertTrue(isinstance(uncle, CounselingUncle))
-    
-    def test_model(self):
-        child = milkman.deliver(EstrangedChild)
-        self.assertTrue(isinstance(child, EstrangedChild))
