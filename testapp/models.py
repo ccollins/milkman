@@ -44,3 +44,12 @@ class Uncle(models.Model):
 class Aunt(models.Model):
     name = models.CharField(blank=False, null=False, max_length=16)
     uncles = models.ManyToManyField(Uncle, blank=False, null=False)
+
+class CounselingUncle(models.Model):
+    uncle = models.ForeignKey(Uncle)
+    cousin = models.ForeignKey("EstrangedChild")
+    date_started = models.DateField()
+
+class EstrangedChild(models.Model):
+    name = models.CharField(max_length=16)
+    uncles = models.ManyToManyField(Uncle, through=CounselingUncle)

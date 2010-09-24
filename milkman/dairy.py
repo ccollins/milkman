@@ -66,6 +66,9 @@ class MilkTruck(object):
     def is_m2m(self, field):
         return field in [f.name for f in self.model_class._meta.local_many_to_many]
     
+    def has_explicit_through_table(self, field):
+        return not field.rel.through._meta.auto_created
+    
     def set_explicit_values(self, target, explicit_values):
         for k,v in explicit_values.iteritems():
             if not self.is_m2m(k):
@@ -86,7 +89,8 @@ class MilkTruck(object):
 
     def set_m2m_fields(self, target, the_milkman, exclude):
         for field in self.fields_to_generate(self.model_class._meta.local_many_to_many, exclude):
-            setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
+            if not self.has_explicit_through_table(field):
+                setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
 
     def generator_for(self, registry, field):
         field_cls = type(field)

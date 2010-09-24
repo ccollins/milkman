@@ -8,7 +8,7 @@ from milkman.dairy import MilkTruck
 from milkman.generators import email_generator, random_choice_iterator, random_string, random_float, random_ipaddress_maker, random_float_maker,random_comma_seperated_integer_maker, random_time_string_maker
 from testapp.models import *
 
-MODELS = [Root, Child]
+MODELS = [Root, Child, Uncle]
 class ModelTest(unittest.TestCase):
     def tearDown(self):
         for m in MODELS:
@@ -47,11 +47,31 @@ class ModelTest(unittest.TestCase):
         aunt = milkman.deliver(Aunt, uncles=[uncle])
         self.assertEquals(uncle, aunt.uncles.all()[0])
     
+    def test_m2m_through_model(self):
+        couseling_uncle = milkman.deliver(CounselingUncle)
+        self.assertTrue(isinstance(couseling_uncle, CounselingUncle))
+        self.assertEquals(couseling_uncle.cousin.uncles.all().count(), 1)
+        self.assertTrue(len(couseling_uncle.cousin.name) > 0)
+        self.assertTrue(len(couseling_uncle.uncle.name) > 0)
+    
+    def test_m2m_model(self):
+        child = milkman.deliver(EstrangedChild)
+        self.assertTrue(isinstance(child, EstrangedChild))
+        self.assertEquals(child.uncles.all().count(), 0)
+        self.assertTrue(len(child.name) > 0)
+    
+    def test_m2m_model_explicit_add(self):
+        child = milkman.deliver(EstrangedChild)
+        couseling_uncle = milkman.deliver(CounselingUncle, cousin=child)
+        self.assertTrue(isinstance(child, EstrangedChild))
+        self.assertEquals(child.uncles.all().count(), 1)
+        self.assertTrue(len(child.name) > 0)
+
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
         assert isinstance(root.my_auto, int)
-        assert isinstance(root.my_biginteger, long)
+        assert isinstance(root.my_biginteger, type(models.BigIntegerField.MAX_BIGINT))
         assert isinstance(root.my_boolean, bool)
         assert isinstance(root.my_char, str)
         assert isinstance(root.my_commaseperatedinteger, str)
@@ -116,3 +136,4 @@ class FieldValueGeneratorTest(unittest.TestCase):
         v = random_time_string_maker(f)().next()
         times = v.split(':')
         self.assertEquals(len(times), 3)
+
