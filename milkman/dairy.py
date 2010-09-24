@@ -17,7 +17,10 @@ class MilkmanRegistry(object):
     def register():
         registry = MilkmanRegistry()
         registry.add_generator(models.AutoField, generators.random_auto_field_maker)
-        registry.add_generator(models.BigIntegerField, generators.random_big_integer_maker)
+        try:
+            registry.add_generator(models.BigIntegerField, generators.random_big_integer_maker)
+        except AttributeError:
+            pass  # Only supported in django 1.2+
         registry.add_generator(models.BooleanField, generators.random_boolean_maker)
         registry.add_generator(models.CharField, generators.random_string_maker)
         registry.add_generator(models.CommaSeparatedIntegerField, generators.random_comma_seperated_integer_maker)

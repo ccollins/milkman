@@ -71,7 +71,10 @@ class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
         assert isinstance(root.my_auto, int)
-        assert isinstance(root.my_biginteger, type(models.BigIntegerField.MAX_BIGINT))
+        try:
+            assert isinstance(root.my_biginteger, type(models.BigIntegerField.MAX_BIGINT))
+        except AttributeError:
+            pass
         assert isinstance(root.my_boolean, bool)
         assert isinstance(root.my_char, str)
         assert isinstance(root.my_commaseperatedinteger, str)

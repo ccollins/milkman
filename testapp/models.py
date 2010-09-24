@@ -2,7 +2,10 @@ from django.db import models
 
 class Root(models.Model):
     my_auto = models.AutoField(blank=False, null=False, primary_key=True)
-    my_biginteger = models.BigIntegerField(blank=False, null=False)
+    try:
+        my_biginteger = models.BigIntegerField(blank=False, null=False)
+    except AttributeError:
+        pass
     my_boolean = models.BooleanField(blank=False, null=False)
     my_char = models.CharField(blank=False, null=False, max_length=16)
     my_commaseperatedinteger = models.CommaSeparatedIntegerField(blank=False, null=False, max_length=12)
