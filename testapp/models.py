@@ -21,7 +21,7 @@ class Root(models.Model):
     my_positivesmallinteger = models.PositiveSmallIntegerField(blank=False, null=False)
     my_slug = models.SlugField(blank=False, null=False)
     my_smallinteger = models.SmallIntegerField(blank=False, null=False)
-    # = models.TextField(blank=False, null=False)
+    my_text = models.TextField(blank=False, null=False)
     my_time = models.TimeField(blank=False, null=False)
     # = models.URLField(blank=False, null=False)
     # = models.XMLField(blank=False, null=False)

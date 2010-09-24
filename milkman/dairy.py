@@ -33,12 +33,12 @@ class MilkmanRegistry(object):
         registry.add_generator(models.PositiveSmallIntegerField, generators.random_small_positive_integer_maker)
         registry.add_generator(models.SlugField, generators.random_string_maker)
         registry.add_generator(models.SmallIntegerField, generators.random_small_integer_maker)
+        registry.add_generator(models.TextField, generators.random_string_maker)
         registry.add_generator(models.TimeField, generators.random_time_string_maker)
+        registry.add_generator(models.URLField, generators.random_url_maker)
         # registry.add_generator(models.FileField, default_generator)
         # registry.add_generator(models.FilePathField, default_generator)
         # registry.add_generator(models.ImageField, default_generator)
-        # registry.add_generator(models.TextField, default_generator)
-        # registry.add_generator(models.URLField, default_generator)
         # registry.add_generator(models.XMLField, default_generator)
         return registry
 

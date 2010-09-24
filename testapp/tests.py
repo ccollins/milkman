@@ -67,6 +67,7 @@ class RandomFieldTest(unittest.TestCase):
         assert isinstance(root.my_positivesmallinteger, int)
         assert isinstance(root.my_slug, str)
         assert isinstance(root.my_smallinteger, int)
+        assert isinstance(root.my_text, str)
         assert isinstance(root.my_time, str)
     
 class FieldTest(unittest.TestCase):
