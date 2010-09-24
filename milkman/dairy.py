@@ -70,7 +70,11 @@ class MilkTruck(object):
         return field in [f.name for f in self.model_class._meta.local_many_to_many]
     
     def has_explicit_through_table(self, field):
-        return not field.rel.through._meta.auto_created
+        if isinstance(field.rel.through, models.base.ModelBase):  # Django 1.2
+            return not field.rel.through._meta.auto_created
+        if isinstance(field.rel.through, (str, unicode)):  # Django 1.1
+            return True
+        return False
     
     def set_explicit_values(self, target, explicit_values):
         for k,v in explicit_values.iteritems():
