@@ -43,9 +43,10 @@ class MilkmanRegistry(object):
         return self.default_generators.get(cls, lambda f: generators.loop(lambda: ''))
 
 class MilkTruck(object):
+    generators = {}
+    
     def __init__(self, model_class):
         self.model_class = model_class
-        self.generators = {}
     
     def deliver(self, the_milkman, **explicit_values):
         exclude = []
