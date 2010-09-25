@@ -3,47 +3,44 @@ from django.db.models.fields.related import RelatedField
 
 from milkman import generators
 
-class MilkmanRegistry(object):    
+class MilkmanRegistry(object):
+    default_generators = {}
+    
     def __init__(self):
-        self.default_generators = {}
+        try:
+            self.add_generator(models.BigIntegerField, generators.random_big_integer_maker)
+        except AttributeError:
+            pass  # Only supported in django 1.2+
+        
+        self.add_generator(models.AutoField, generators.random_auto_field_maker)
+        self.add_generator(models.BooleanField, generators.random_boolean_maker)
+        self.add_generator(models.CharField, generators.random_string_maker)
+        self.add_generator(models.CommaSeparatedIntegerField, generators.random_comma_seperated_integer_maker)
+        self.add_generator(models.DateField, generators.random_date_string_maker)
+        self.add_generator(models.DateTimeField, generators.random_datetime_string_maker)
+        self.add_generator(models.DecimalField, generators.random_decimal_maker)
+        self.add_generator(models.EmailField, generators.email_generator('user', 'example.com'))
+        self.add_generator(models.FloatField, generators.random_float_maker)
+        self.add_generator(models.IntegerField, generators.random_integer_maker)
+        self.add_generator(models.IPAddressField, generators.random_ipaddress_maker)
+        self.add_generator(models.NullBooleanField, generators.random_null_boolean_maker)
+        self.add_generator(models.PositiveIntegerField, generators.random_positive_integer_maker)
+        self.add_generator(models.PositiveSmallIntegerField, generators.random_small_positive_integer_maker)
+        self.add_generator(models.SlugField, generators.random_string_maker)
+        self.add_generator(models.SmallIntegerField, generators.random_small_integer_maker)
+        self.add_generator(models.TextField, generators.random_string_maker)
+        self.add_generator(models.TimeField, generators.random_time_string_maker)
+        # self.add_generator(models.URLField, generators.random_url_maker)
+        # self.add_generator(models.FileField, default_generator)
+        # self.add_generator(models.FilePathField, default_generator)
+        # self.add_generator(models.ImageField, default_generator)
+        # self.add_generator(models.XMLField, default_generator)
     
     def add_generator(self, cls, func):
         self.default_generators[cls] = func
     
     def get(self, cls):
         return self.default_generators.get(cls, lambda f: generators.loop(lambda: ''))
-
-    @staticmethod
-    def register():
-        registry = MilkmanRegistry()
-        registry.add_generator(models.AutoField, generators.random_auto_field_maker)
-        try:
-            registry.add_generator(models.BigIntegerField, generators.random_big_integer_maker)
-        except AttributeError:
-            pass  # Only supported in django 1.2+
-        registry.add_generator(models.BooleanField, generators.random_boolean_maker)
-        registry.add_generator(models.CharField, generators.random_string_maker)
-        registry.add_generator(models.CommaSeparatedIntegerField, generators.random_comma_seperated_integer_maker)
-        registry.add_generator(models.DateField, generators.random_date_string_maker)
-        registry.add_generator(models.DateTimeField, generators.random_datetime_string_maker)
-        registry.add_generator(models.DecimalField, generators.random_decimal_maker)
-        registry.add_generator(models.EmailField, generators.email_generator('user', 'example.com'))
-        registry.add_generator(models.FloatField, generators.random_float_maker)
-        registry.add_generator(models.IntegerField, generators.random_integer_maker)
-        registry.add_generator(models.IPAddressField, generators.random_ipaddress_maker)
-        registry.add_generator(models.NullBooleanField, generators.random_null_boolean_maker)
-        registry.add_generator(models.PositiveIntegerField, generators.random_positive_integer_maker)
-        registry.add_generator(models.PositiveSmallIntegerField, generators.random_small_positive_integer_maker)
-        registry.add_generator(models.SlugField, generators.random_string_maker)
-        registry.add_generator(models.SmallIntegerField, generators.random_small_integer_maker)
-        registry.add_generator(models.TextField, generators.random_string_maker)
-        registry.add_generator(models.TimeField, generators.random_time_string_maker)
-        # registry.add_generator(models.URLField, generators.random_url_maker)
-        # registry.add_generator(models.FileField, default_generator)
-        # registry.add_generator(models.FilePathField, default_generator)
-        # registry.add_generator(models.ImageField, default_generator)
-        # registry.add_generator(models.XMLField, default_generator)
-        return registry
 
 class MilkTruck(object):
     def __init__(self, model_class):
@@ -122,4 +119,4 @@ class Milkman(object):
         truck = self.trucks.setdefault(model_class, MilkTruck(model_class))
         return truck.deliver(self, **explicit_values)
 
-milkman = Milkman(MilkmanRegistry.register())
+milkman = Milkman(MilkmanRegistry())
