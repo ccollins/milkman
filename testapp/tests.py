@@ -66,6 +66,11 @@ class ModelTest(unittest.TestCase):
         self.assertTrue(isinstance(child, EstrangedChild))
         self.assertEquals(child.uncles.all().count(), 1)
         self.assertTrue(len(child.name) > 0)
+        
+    def test_m2m_model_self(self):
+        child = milkman.deliver(PsychoChild)
+        self.assertEquals(child.alter_egos.all().count(), 1)
+        self.assertEquals(PsychoChild.objects.all().count(), 2)
 
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):

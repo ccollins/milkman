@@ -95,7 +95,11 @@ class MilkTruck(object):
     def set_m2m_fields(self, target, the_milkman, exclude):
         for field in self.fields_to_generate(self.model_class._meta.local_many_to_many, exclude):
             if not self.has_explicit_through_table(field):
-                setattr(target, field.name, [the_milkman.deliver(field.rel.to)])
+                exclude = {}
+                #if the target field is the same class, we don't want to keep generating
+                if type(target) == field.related.model:
+                    exclude = {field.name:''}
+                setattr(target, field.name, [the_milkman.deliver(field.rel.to, **exclude)])
 
     def generator_for(self, registry, field):
         field_cls = type(field)

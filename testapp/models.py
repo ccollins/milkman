@@ -56,3 +56,7 @@ class CounselingUncle(models.Model):
 class EstrangedChild(models.Model):
     name = models.CharField(max_length=16)
     uncles = models.ManyToManyField(Uncle, through=CounselingUncle)
+    
+class PsychoChild(models.Model):
+    name = models.CharField(max_length=16)
+    alter_egos = models.ManyToManyField("self")
