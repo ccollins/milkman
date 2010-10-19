@@ -60,3 +60,6 @@ class EstrangedChild(models.Model):
 class PsychoChild(models.Model):
     name = models.CharField(max_length=16)
     alter_egos = models.ManyToManyField("self")
+
+class AdoptedChild(Child):
+    birth_origin = models.CharField(max_length=100)

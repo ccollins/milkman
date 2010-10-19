@@ -72,6 +72,17 @@ class ModelTest(unittest.TestCase):
         self.assertEquals(child.alter_egos.all().count(), 1)
         self.assertEquals(PsychoChild.objects.all().count(), 2)
 
+INHERITED_MODELS = [AdoptedChild]
+class ModelInheritanceTest(unittest.TestCase):
+    def tearDown(self):
+        for m in INHERITED_MODELS:
+            m._default_manager.all().delete()
+    
+    def test_create_adopted_child(self):
+        from ipdb import set_trace; set_trace()
+        a = milkman.deliver(AdoptedChild)
+        assert a.child is not None
+
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):
         root = milkman.deliver(Root)
