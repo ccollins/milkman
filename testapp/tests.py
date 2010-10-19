@@ -79,7 +79,6 @@ class ModelInheritanceTest(unittest.TestCase):
             m._default_manager.all().delete()
     
     def test_create_adopted_child(self):
-        from ipdb import set_trace; set_trace()
         a = milkman.deliver(AdoptedChild)
         assert a.child is not None
 
