@@ -80,7 +80,7 @@ class ModelInheritanceTest(unittest.TestCase):
     
     def test_create_adopted_child(self):
         a = milkman.deliver(AdoptedChild)
-        assert a.child is not None
+        assert a.root is not None
 
 class RandomFieldTest(unittest.TestCase):
     def test_required_field(self):

@@ -85,7 +85,7 @@ class MilkTruck(object):
                 setattr(target, k, vs)
 
     def set_local_fields(self, target, the_milkman, exclude):
-        for field in self.fields_to_generate(self.model_class._meta.local_fields, exclude):
+        for field in self.fields_to_generate(self.model_class._meta.fields, exclude):
             if isinstance(field, RelatedField):
                 v = the_milkman.deliver(field.rel.to)
             else:
