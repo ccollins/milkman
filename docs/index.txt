@@ -20,7 +20,7 @@ Example::
     from django.core.urlresolvers import reverse
     from django.test import TestCase, Client
 
-    from milkman import milkman
+    from milkman.dairy import milkman
 
     from app.models import Library, Book, Author
 
