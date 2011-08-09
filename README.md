@@ -18,18 +18,20 @@ Quick Examples
 Development
 -----------
 Install virtualenv and virtualenvwrapper
+
 http://www.virtualenv.org/en/latest/index.html
+
 http://pypi.python.org/pypi/virtualenvwrapper
 
-  mkvirtualenv milkman
-  pip install -r requirements.txt
+    mkvirtualenv milkman
+    pip install -r requirements.txt
 
 
 Running Tests
 -------------
 
-  cd testapp
-  ./manage.py test
+    cd testapp
+    ./manage.py test
   
 
 Known Issues
