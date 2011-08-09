@@ -13,7 +13,24 @@ Quick Examples
 	#I want a video with a particular editor
 	e = milkman.deliver(Editor)
 	v = milkman.deliver(Video, editor=e)
+	
+	
+Development
+-----------
+Install virtualenv and virtualenvwrapper
+http://www.virtualenv.org/en/latest/index.html
+http://pypi.python.org/pypi/virtualenvwrapper
 
+  mkvirtualenv milkman
+  pip install -r requirements.txt
+
+
+Running Tests
+-------------
+
+  cd testapp
+  ./manage.py test
+  
 
 Known Issues
 ------------
