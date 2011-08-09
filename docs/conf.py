@@ -9,8 +9,8 @@ master_doc = 'index'
 
 project = 'milkman'
 copyright = '2010'
-version = '0.3'
-release = '0.3'
+version = '4.4'
+release = '4.4'
 
 today_fmt = '%B %d, %Y'
 exclude_trees = []
