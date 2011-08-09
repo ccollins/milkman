@@ -85,7 +85,7 @@ def email_generator(addr, domain):
         return sequence(lambda i: template % i)
     return email_gen_maker
 
-def random_integer_maker(field, low=-sys.maxint-1, high=sys.maxint):
+def random_integer_maker(field, low=-2147483647, high=2147483647):
     return loop(lambda: random.randint(low, high))
 
 def random_big_integer_maker(field):
@@ -104,7 +104,7 @@ def random_float_maker(field):
     return loop(lambda: random_float())
     
 def random_auto_field_maker(field):
-    return loop(lambda: random.randint(1, sys.maxint))
+    return loop(lambda: random.randint(1, 2147483647))
 
 def random_float():
     return random.uniform(sys.float_info.min, sys.float_info.max)
