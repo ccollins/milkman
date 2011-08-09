@@ -117,14 +117,7 @@ class MilkTruck(object):
                     pass
             else:
                 v = self.generator_for(the_milkman.registry, field).next()
-            try:
-                if not getattr(target, field.name):
-                    setattr(target, field.name, v)
-            except field.rel.to.DoesNotExist:
-                raise field.rel.to.DoesNotExist( "Please deliver a %s and add "
-                    "%s_id=your_%s.id when delivering a %s" % ( field.name,
-                    field.name, field.name, type(target).__name__),
-                )
+            setattr(target, field.name, v)
 
     def set_m2m_fields(self, target, the_milkman, exclude):
         for field in self.fields_to_generate(
