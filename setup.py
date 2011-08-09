@@ -14,7 +14,7 @@ except:
 setup(name="milkman",
     version=VERSION,
     packages = ["milkman"],
-    author="Wilkes Joiner, Chuck Collins",
+    author="Wilkes Joiner, Chuck Collins, Patrick Altman",
     author_email="chuck.collins@gmail.com",
     install_requires=["docutils>=0.3"],
     license = "MIT",
