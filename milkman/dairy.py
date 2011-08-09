@@ -111,10 +111,7 @@ class MilkTruck(object):
         for field in self.fields_to_generate(self.model_class._meta.fields,
                                              exclude):
             if isinstance(field, RelatedField):
-                try:
-                    v = the_milkman.deliver(field.rel.to)
-                except:
-                    pass
+                v = the_milkman.deliver(field.rel.to)
             else:
                 v = self.generator_for(the_milkman.registry, field).next()
             setattr(target, field.name, v)
