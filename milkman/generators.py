@@ -203,8 +203,9 @@ def random_image(field):
         if e.errno != errno.EEXIST:
             raise
     filehandle = storage.open(filename, mode="w")
-    # provided file-like object
     im.save(filehandle, "PNG")
+    
+    filehandle.close()
 
     return filename # and we"re done!
 
