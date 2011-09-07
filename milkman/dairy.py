@@ -68,7 +68,16 @@ class MilkTruck(object):
     generators = {}
 
     def __init__(self, model_class):
+        if isinstance(model_class, basestring):
+           model_class = self.get_model_class_from_string(model_class)
         self.model_class = model_class
+
+    def get_model_class_from_string(self, model_name):
+        assert '.' in model_name, ("'model_class' must be either a model"
+                                   " or a model name in the format"
+                                   " app_label.model_name")
+        app_label, model_name = model_name.split(".")
+        return models.get_model(app_label, model_name)
 
     def deliver(self, the_milkman, **explicit_values):
         exclude = []
