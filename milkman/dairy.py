@@ -71,18 +71,29 @@ class MilkTruck(object):
         self.model_class = model_class
 
     def deliver(self, the_milkman, **explicit_values):
+
+        model_explicit_values = {}
+        related_explicit_values = {}
+        for key, value in explicit_values.iteritems():
+            if '__' in key:
+                prefix, sep, postfix = key.partition('__')
+                related_explicit_values.setdefault(prefix, {})
+                related_explicit_values[prefix][postfix] = value
+            else:
+                model_explicit_values[key] = value
+
         exclude = []
-        if explicit_values:
-            exclude = explicit_values.keys()
+        if model_explicit_values:
+            exclude = model_explicit_values.keys()
 
         target = self.model_class()
 
-        self.set_explicit_values(target, explicit_values)
-        self.set_local_fields(target, the_milkman, exclude)
+        self.set_explicit_values(target, model_explicit_values)
+        self.set_local_fields(target, the_milkman, exclude, related_explicit_values)
         target.save()
 
-        self.set_m2m_explicit_values(target, explicit_values)
-        self.set_m2m_fields(target, the_milkman, exclude)
+        self.set_m2m_explicit_values(target, model_explicit_values)
+        self.set_m2m_fields(target, the_milkman, exclude, related_explicit_values)
 
         return target
 
@@ -107,16 +118,17 @@ class MilkTruck(object):
             if self.is_m2m(k):
                 setattr(target, k, vs)
 
-    def set_local_fields(self, target, the_milkman, exclude):
+    def set_local_fields(self, target, the_milkman, exclude, related_explicit_values):
         for field in self.fields_to_generate(self.model_class._meta.fields,
                                              exclude):
             if isinstance(field, RelatedField):
-                v = the_milkman.deliver(field.rel.to)
+                explicit_values = related_explicit_values.get(field.name, {})
+                v = the_milkman.deliver(field.rel.to, **explicit_values)
             else:
                 v = self.generator_for(the_milkman.registry, field).next()
             setattr(target, field.name, v)
 
-    def set_m2m_fields(self, target, the_milkman, exclude):
+    def set_m2m_fields(self, target, the_milkman, exclude, related_explicit_values):
         for field in self.fields_to_generate(
                 self.model_class._meta.local_many_to_many, exclude):
             if not self.has_explicit_through_table(field):
@@ -125,8 +137,10 @@ class MilkTruck(object):
                 # generating
                 if type(target) == field.related.model:
                     exclude = {field.name: ''}
+                explicit_values = related_explicit_values.get(field.name, {})
+                explicit_values.update(exclude)
                 setattr(target, field.name, [the_milkman.deliver(
-                    field.rel.to, **exclude)])
+                    field.rel.to, **explicit_values)])
 
     def generator_for(self, registry, field):
         field_cls = type(field)

@@ -72,6 +72,25 @@ class ModelTest(unittest.TestCase):
         self.assertEquals(child.alter_egos.all().count(), 1)
         self.assertEquals(PsychoChild.objects.all().count(), 2)
 
+    def test_related_explicit_values(self):
+        child = milkman.deliver(Child, root__my_char='foo')
+        self.assertEqual(child.root.my_char, 'foo')
+
+        grandchild = milkman.deliver(GrandChild, parent__name='foo', parent__root__my_char='bar')
+        self.assertEqual(grandchild.parent.name, 'foo')
+        self.assertEqual(grandchild.parent.root.my_char, 'bar')
+
+        root = milkman.deliver(Root)
+        grandchild = milkman.deliver(GrandChild, parent__root=root)
+        self.assertEqual(root.pk, grandchild.parent.root.pk)
+
+    def test_m2m_related_explicit_values(self):
+        aunt = milkman.deliver(Aunt, uncles__name='foo')
+        self.assertEqual(1, len(aunt.uncles.all()))
+        self.assertEqual(aunt.uncles.all()[0].name, 'foo')
+
+
+
 INHERITED_MODELS = [AdoptedChild]
 class ModelInheritanceTest(unittest.TestCase):
     def tearDown(self):
