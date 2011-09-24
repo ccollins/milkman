@@ -20,6 +20,12 @@ class ModelTest(unittest.TestCase):
         self.assertTrue(bool(r.my_auto))
         assert r.my_char is not None
 
+    def test_create_with_string(self):
+        r = milkman.deliver('testapp.Root')
+        self.assertEqual(Root, r.__class__)
+        self.assertTrue(bool(r.my_auto))
+        assert r.my_char is not None
+
     def test_create_explicit(self):
         r = milkman.deliver(Root, my_char='foo')
         self.assertEqual('foo', r.my_char)

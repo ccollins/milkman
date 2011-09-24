@@ -32,7 +32,7 @@ Example::
             self.user.set_password("letmein")
             self.user.save()
         
-            self.user2 = milkman.deliver(User)
+            self.user2 = milkman.deliver('auth.user')
             self.user2.set_password("letmein")
             self.user2.save()
         
