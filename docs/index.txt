@@ -35,20 +35,18 @@ Example::
             self.user2 = milkman.deliver('auth.user')
             self.user2.set_password("letmein")
             self.user2.save()
-        
-            self.library = milkman.deliver(Library)
-            self.book = milkman.deliver(Book)
+            
+            self.book = milkman.deliver(Book, library__name="Library of Congress")
             self.author = milkman.deliver(Author, lastname="Lewis")
         
             self.client = Client()
             self.client.login(username=self.user.username, password="letmein")
         
-            self.url = reverse("book", args=[self.library.id, self.book.id])
+            self.url = reverse("book", args=[self.book.library.id, self.book.id])
 
         def tearDown(self):
             self.user.delete()
             self.user2.delete()
-            self.library.delete()
             self.book.delete()
             self.author.delete()
 
