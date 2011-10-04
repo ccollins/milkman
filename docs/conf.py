@@ -8,7 +8,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 project = 'milkman'
-copyright = '2010'
+copyright = '2011'
 version = '4.4'
 release = '4.4'
 
