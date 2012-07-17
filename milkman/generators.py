@@ -1,7 +1,15 @@
 import datetime
+import errno
+import os
 import random
 import string
 import sys
+import uuid
+
+from django.core.files.storage import DefaultStorage
+
+from PIL import Image, ImageDraw
+
 
 DEFAULT_STRING_LENGTH = 8
 DECIMAL_TEMPLATE = "%%d.%%0%dd"
@@ -169,3 +177,62 @@ def random_comma_seperated_integer_maker(field):
 
 def random_time_string_maker(field):
     return loop(lambda: random_time_string())
+
+
+def random_rgb():
+    return (
+        random.randint(0, 255),
+        random.randint(0, 255),
+        random.randint(0, 255),
+    )
+
+
+def random_image(field):
+
+    color1 = random_rgb()
+    color2 = random_rgb()
+    color3 = random_rgb()
+    color4 = random_rgb()
+    size = (random.randint(300, 900), random.randint(300, 900))
+
+    im = Image.new("RGB", size)  # create the image
+    draw = ImageDraw.Draw(im)    # create a drawing object that is
+    draw.rectangle(
+        [(0, 0), ((size[0] / 2), (size[1] / 2))],
+        fill=color1
+    )
+    draw.rectangle(
+        [((size[0] / 2), 0), ((size[1] / 2), size[0])],
+        fill=color2
+    )
+    draw.rectangle(
+        [(0, (size[1] / 2)), ((size[0] / 2), size[1])],
+        fill=color3
+    )
+    draw.rectangle(
+        [((size[0] / 2), (size[1] / 2)), (size[0], size[1])],
+        fill=color4
+    )
+
+    filename = "%s.png" % uuid.uuid4().hex[:10]
+    filename = field.generate_filename(None, filename)
+    storage = DefaultStorage()
+    full_path = storage.path(filename)
+    directory = os.path.dirname(full_path)
+
+    try:
+        os.makedirs(directory)
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    filehandle = storage.open(filename, mode="w")
+    im.save(filehandle, "PNG")
+
+    filehandle.close()
+
+    return filename  # and we"re done!
+
+
+def random_image_maker(field):
+    return loop(lambda: random_image(field))

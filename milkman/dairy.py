@@ -53,7 +53,7 @@ class MilkmanRegistry(object):
         # self.add_generator(models.URLField, generators.random_url_maker)
         # self.add_generator(models.FileField, default_generator)
         # self.add_generator(models.FilePathField, default_generator)
-        # self.add_generator(models.ImageField, default_generator)
+        self.add_generator(models.ImageField, generators.random_image_maker)
         # self.add_generator(models.XMLField, default_generator)
 
     def add_generator(self, cls, func):
