@@ -63,3 +63,6 @@ class PsychoChild(models.Model):
 
 class AdoptedChild(Child):
     birth_origin = models.CharField(max_length=100)
+
+class ImageChild(Child):
+    photo = models.ImageField(upload_to="uploads/")

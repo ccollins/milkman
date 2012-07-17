@@ -95,6 +95,11 @@ class ModelTest(unittest.TestCase):
         self.assertEqual(1, len(aunt.uncles.all()))
         self.assertEqual(aunt.uncles.all()[0].name, 'foo')
 
+    def test_image_model(self):
+        image = milkman.deliver(ImageChild)
+        self.assertTrue(len(image.photo.url) > 0)
+        self.assertTrue(image.photo.size > 0)
+
 
 
 INHERITED_MODELS = [AdoptedChild]
