@@ -69,7 +69,7 @@ class MilkTruck(object):
 
     def __init__(self, model_class):
         if isinstance(model_class, basestring):
-           model_class = self.get_model_class_from_string(model_class)
+            model_class = self.get_model_class_from_string(model_class)
         self.model_class = model_class
 
     def get_model_class_from_string(self, model_name):
@@ -98,11 +98,21 @@ class MilkTruck(object):
         target = self.model_class()
 
         self.set_explicit_values(target, model_explicit_values)
-        self.set_local_fields(target, the_milkman, exclude, related_explicit_values)
+        self.set_local_fields(
+            target,
+            the_milkman,
+            exclude,
+            related_explicit_values
+        )
         target.save()
 
         self.set_m2m_explicit_values(target, model_explicit_values)
-        self.set_m2m_fields(target, the_milkman, exclude, related_explicit_values)
+        self.set_m2m_fields(
+            target,
+            the_milkman,
+            exclude,
+            related_explicit_values
+        )
 
         return target
 
@@ -127,7 +137,11 @@ class MilkTruck(object):
             if self.is_m2m(k):
                 setattr(target, k, vs)
 
-    def set_local_fields(self, target, the_milkman, exclude, related_explicit_values):
+    def set_local_fields(self,
+                         target,
+                         the_milkman,
+                         exclude,
+                         related_explicit_values):
         for field in self.fields_to_generate(self.model_class._meta.fields,
                                              exclude):
             if isinstance(field, RelatedField):
@@ -137,7 +151,11 @@ class MilkTruck(object):
                 v = self.generator_for(the_milkman.registry, field).next()
             setattr(target, field.name, v)
 
-    def set_m2m_fields(self, target, the_milkman, exclude, related_explicit_values):
+    def set_m2m_fields(self,
+                       target,
+                       the_milkman,
+                       exclude,
+                       related_explicit_values):
         for field in self.fields_to_generate(
                 self.model_class._meta.local_many_to_many, exclude):
             if not self.has_explicit_through_table(field):
