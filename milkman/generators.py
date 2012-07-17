@@ -1,7 +1,15 @@
 import datetime
+import errno
+import os
 import random
 import string
 import sys
+import uuid
+
+from django.core.files.storage import DefaultStorage
+
+from PIL import Image, ImageDraw
+
 
 DEFAULT_STRING_LENGTH = 8
 DECIMAL_TEMPLATE = "%%d.%%0%dd"
@@ -172,12 +180,6 @@ def random_time_string_maker(field):
 
 
 def random_image(field):
-    from PIL import Image, ImageDraw
-    from django.core.files.storage import DefaultStorage
-    import random
-    import uuid
-    import os
-    import errno
 
     color1 = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
     color2 = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
