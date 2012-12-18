@@ -63,3 +63,10 @@ class PsychoChild(models.Model):
 
 class AdoptedChild(Child):
     birth_origin = models.CharField(max_length=100)
+
+
+class LongName(models.Model):
+    name = models.CharField(max_length=200)
+
+class ShortName(models.Model):
+    name = models.CharField(max_length=100)
