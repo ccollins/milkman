@@ -182,7 +182,10 @@ class MilkTruck(object):
                 self.needs_generated_value(f)]
 
     def needs_generated_value(self, field):
-        return not field.has_default() and not field.blank and not field.null
+        return hasattr(field, 'has_default') and \
+               not field.has_default() and \
+               not field.blank and \
+               not field.null
 
 
 class Milkman(object):
