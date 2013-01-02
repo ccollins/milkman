@@ -1,2 +1,3 @@
 django
 docutils>=0.3
+PIL
