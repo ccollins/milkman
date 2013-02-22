@@ -65,9 +65,9 @@ class MilkmanRegistry(object):
 
 
 class MilkTruck(object):
-    generators = {}
-
     def __init__(self, model_class):
+        self.generators = {}
+        
         if isinstance(model_class, basestring):
             model_class = self.get_model_class_from_string(model_class)
         self.model_class = model_class

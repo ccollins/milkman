@@ -28,7 +28,7 @@ class Root(models.Model):
     my_time = models.TimeField(blank=False, null=False)
     # = models.URLField(blank=False, null=False)
     # = models.XMLField(blank=False, null=False)
-        
+
 class Child(models.Model):
     name = models.CharField(blank=False, null=False, max_length=16)
     root = models.ForeignKey(Root, blank=False, null=False)
@@ -56,7 +56,7 @@ class CounselingUncle(models.Model):
 class EstrangedChild(models.Model):
     name = models.CharField(max_length=16)
     uncles = models.ManyToManyField(Uncle, through=CounselingUncle)
-    
+
 class PsychoChild(models.Model):
     name = models.CharField(max_length=16)
     alter_egos = models.ManyToManyField("self")
@@ -66,3 +66,10 @@ class AdoptedChild(Child):
 
 class ImageChild(Child):
     photo = models.ImageField(upload_to="uploads/")
+
+class LongName(models.Model):
+    name = models.CharField(max_length=200)
+
+class ShortName(models.Model):
+    name = models.CharField(max_length=100)
+

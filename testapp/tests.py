@@ -185,3 +185,9 @@ class FieldValueGeneratorTest(unittest.TestCase):
         times = v.split(':')
         self.assertEquals(len(times), 3)
 
+    def test_field_name_clash(self):
+        milkman.deliver(LongName)
+        short_name = milkman.deliver(ShortName)
+
+        self.assertEqual(len(short_name.name), 100)
+
