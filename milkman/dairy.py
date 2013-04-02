@@ -25,7 +25,7 @@ class MilkmanRegistry(object):
         self.add_generator(models.DateField,
             generators.random_date_string_maker)
         self.add_generator(models.DateTimeField,
-            generators.random_datetime_string_maker)
+            generators.random_datetime)
         self.add_generator(models.DecimalField,
             generators.random_decimal_maker)
         self.add_generator(models.EmailField,

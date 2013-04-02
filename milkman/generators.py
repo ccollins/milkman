@@ -7,6 +7,7 @@ import sys
 import uuid
 
 from django.core.files.storage import DefaultStorage
+from django.utils import timezone
 
 from PIL import Image, ImageDraw
 
@@ -62,6 +63,14 @@ def random_boolean_maker(field=None):
 
 def random_null_boolean_maker(field=None):
     return loop(lambda: random.choice((None, True, False)))
+
+
+def random_datetime(field):
+    return loop(lambda: timezone.now() - datetime.timedelta(days=random.randint(0, 300)))
+
+
+def random_date(field):
+    return loop(lambda: (timezone.now() - datetime.timedelta(days=random.randint(0, 300)).date))
 
 
 def random_date_string():
