@@ -231,7 +231,7 @@ def random_image(field):
 
     try:
         os.makedirs(directory)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise
 
